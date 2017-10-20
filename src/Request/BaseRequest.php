@@ -2,8 +2,8 @@
 
 namespace SfRestApi\Request;
 
-use GuzzleHttp\Client;
 use AccessToken;
+use GuzzleHttp\Client;
 use SfRestApi\Contracts\ClientConfigInterface;
 
 /**
@@ -16,7 +16,7 @@ class BaseRequest
     /**
      * @var Client
      */
-    protected $client;
+    protected $guzzleclient;
 
     /**
      * @var ClientConfigInterface
@@ -24,25 +24,7 @@ class BaseRequest
     protected $config;
 
     /**
-     * @var mixed
-     * @access protected
-     */
-    protected $apiVersion = 'v41.0';
-
-    /**
-     * @var mixed
-     * @access protected
-     */
-    protected $consumerKey;
-
-    /**
-     * @var mixed
-     * @access protected
-     */
-    protected $isAuthorized;
-
-    /**
-     * @var mixed
+     * @var AccessToken
      * @access protected
      */
     protected $accessToken;
@@ -51,25 +33,7 @@ class BaseRequest
      * @var mixed
      * @access protected
      */
-    protected $consumerSecret;
-
-    /**
-     * @var string
-     * @access protected
-     */
-    protected $username;
-
-    /**
-     * @var mixed
-     * @access protected
-     */
-    protected $password;
-
-    /**
-     * @var mixed
-     * @access protected
-     */
-    protected $securityToken;
+    protected $isAuthorized;
 
     /**
      * @var string
@@ -89,17 +53,12 @@ class BaseRequest
      */
     public function __construct(ClientConfigInterface $config){
         $this->isAuthorized   = false;
+        $this->accessToken = new AccessToken();
         $this->config = $config;
-        /*$this->consumerKey    = $config->getClientId();
-        $this->consumerSecret = $config->getClientSecret();
-        $this->username       = $config->getUsername();
-        $this->password       = $config->getPassword();
-        $this->securityToken  = $config->getSecurityToken();
-        $this->baseUrl        = $config->getLoginUrl();*/
 
         $this->baseUri = '/services/data'.$config->getApiVersion();
 
-        $this->client = new Client(['base_uri' => $config->baseUrl]);
+        $this->guzzleclient = new Client(['base_uri' => $config->baseUrl]);
     }
 
     /**
@@ -107,26 +66,26 @@ class BaseRequest
      */
     protected function getAccessToken()
     {
-        if (null === $this->accessToken) {
+        if (null === $this->accessToken->getAccessToken()) {
             $post_data = [
                 'grant_type'    => 'password',
-                'client_id'     => $this->consumerKey,
-                'client_secret' => $this->consumerSecret,
-                'username'      => $this->username,
-                'password'      => $this->password.$this->securityToken,
+                'client_id'     => $this->config->getClientId(),
+                'client_secret' => $this->config->getClientSecret(),
+                'username'      => $this->config->getUsername(),
+                'password'      => $this->config->getPassword().$this->config->getSecurityToken(),
             ];
 
             $uri = sprintf('%s?%s', '/services/oauth2/token', http_build_query($post_data));
-            $response = $this->client->request('POST', $uri);
+            $response = $this->guzzleclient->request('POST', $uri);
 
             if (200 == $response->getStatusCode()) {
                 $body = json_decode($response->getBody(true), true);
-                $this->accessToken = $body['access_token'];
+                $this->accessToken->setAccessToken($body['access_token']);
                 $this->isAuthorized = true;
             }
         }
 
-        return $this->accessToken;
+        return $this->accessToken->getAccessToken();
     }
 
     /**

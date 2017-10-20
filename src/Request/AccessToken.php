@@ -35,6 +35,14 @@ class AccessToken implements AccessTokenInterface
     }
 
     /**
+     * @param string $access_token
+     */
+    public function setAccessToken(string $access_token)
+    {
+        $this->access_token = $access_token;
+    }
+
+    /**
      * @return string
      */
     public function getRefreshToken(): string
@@ -43,10 +51,26 @@ class AccessToken implements AccessTokenInterface
     }
 
     /**
+     * @param string $refresh_token
+     */
+    public function setRefreshToken(string $refresh_token)
+    {
+        $this->refresh_token = $refresh_token;
+    }
+
+    /**
      * @return string
      */
     public function getTokenExpires(): string
     {
         return $this->token_expires;
+    }
+
+    /**
+     * @param string $token_expires
+     */
+    public function setTokenExpires(string $token_expires)
+    {
+        $this->token_expires = $token_expires;
     }
 }

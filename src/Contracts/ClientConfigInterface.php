@@ -37,5 +37,15 @@ interface ClientConfigInterface
     /**
      * @return string
      */
+    public function getSecurityToken();
+
+    /**
+     * @return string
+     */
     public function getApiVersion();
+
+    /**
+     * @return string
+     */
+    public function getBaseUri();
 }

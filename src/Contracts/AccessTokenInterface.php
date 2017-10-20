@@ -15,7 +15,16 @@ interface AccessTokenInterface
     public function getAccessToken();
 
     /**
+     * @param string
+     */
+    public function setAccessToken();
+    /**
      * @return string
      */
     public function getRefreshToken();
+
+    /**
+     * @param string
+     */
+    public function setRefreshToken();
 }
