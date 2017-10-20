@@ -1,12 +1,15 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: nalessandro
- * Date: 10/20/17
- * Time: 09:32
+ * SalesForce Authentication
+ *
+ * @author: Nathan Alessandro
+ * @email: nalessan@gmail.com
+ *
+ * CHANGE LOG:
+ * 10/20/17 - NJA - Created
  */
 
-namespace SfRestApi\Auth;
+namespace SfRestApi\Config;
 
 use GuzzleHttp\Client;
 

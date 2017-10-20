@@ -7,15 +7,11 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class SfRestApiService
 {
-
-
     /**
      * @var mixed
      * @access protected
      */
     protected $jobId;
-
-
 
     /**
      * @return array|bool|float|int|string
