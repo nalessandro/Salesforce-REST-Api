@@ -1,24 +1,25 @@
 <?php
 /**
- * SalesForce Authentication
- *
- * @author: Nathan Alessandro
- * @email: nalessan@gmail.com
- *
  * CHANGE LOG:
  * 10/20/17 - NJA - Created
  */
-
-namespace SfRestApi\Config;
+namespace SfRestApi\Request;
 
 use GuzzleHttp\Client;
+use AccessToken;
+use SfRestApi\Interfaces\ClientConfigInterface;
 
-class Authentication
+class BaseRequest
 {
     /**
      * @var Client
      */
     protected $client;
+
+    /**
+     * @var ClientConfigInterface
+     */
+    protected $config;
 
     /**
      * @var mixed
@@ -81,34 +82,22 @@ class Authentication
     protected $baseUri;
 
     /**
-     * RESTApi constructor.
-     *
-     * @param string $consumerKey
-     * @param string $consumerSecret
-     * @param string $username
-     * @param string $password
-     * @param string $securityToken
-     * @param string $baseUrl
+     * BaseRequest constructor.
+     * @param ClientConfigInterface $config
      */
-    public function __construct(
-        $consumerKey,
-        $consumerSecret,
-        $username,
-        $password,
-        $securityToken,
-        $baseUrl
-    ){
+    public function __construct(ClientConfigInterface $config){
         $this->isAuthorized   = false;
-        $this->consumerKey    = $consumerKey;
-        $this->consumerSecret = $consumerSecret;
-        $this->username       = $username;
-        $this->password       = $password;
-        $this->securityToken  = $securityToken;
-        $this->baseUrl        = $baseUrl;
+        $this->config = $config;
+        /*$this->consumerKey    = $config->getClientId();
+        $this->consumerSecret = $config->getClientSecret();
+        $this->username       = $config->getUsername();
+        $this->password       = $config->getPassword();
+        $this->securityToken  = $config->getSecurityToken();
+        $this->baseUrl        = $config->getLoginUrl();*/
 
-        $this->baseUri = '/services/data';
+        $this->baseUri = '/services/data'.$config->getApiVersion();
 
-        $this->client = new Client(['base_uri' => $baseUrl]);
+        $this->client = new Client(['base_uri' => $config->baseUrl]);
     }
 
     /**
@@ -117,7 +106,7 @@ class Authentication
     protected function getAccessToken()
     {
         if (null === $this->accessToken) {
-            $query = [
+            $post_data = [
                 'grant_type'    => 'password',
                 'client_id'     => $this->consumerKey,
                 'client_secret' => $this->consumerSecret,
@@ -125,7 +114,7 @@ class Authentication
                 'password'      => $this->password.$this->securityToken,
             ];
 
-            $uri = sprintf('%s?%s', '/services/oauth2/token', http_build_query($query));
+            $uri = sprintf('%s?%s', '/services/oauth2/token', http_build_query($post_data));
             $response = $this->client->request('POST', $uri);
 
             if (200 == $response->getStatusCode()) {
