@@ -32,8 +32,8 @@ class BaseRequest
      * BaseRequest constructor.
      * @param ClientConfigInterface $config
      */
-    public function __construct(ClientConfigInterface $config){
-
+    public function __construct( ClientConfigInterface $config )
+    {
         $this->config = $config;
         $this->guzzle_client = new Client(['base_uri' => $config->getBaseUri()]);
     }
@@ -43,7 +43,7 @@ class BaseRequest
      */
     protected function getAccessToken()
     {
-        if (null === $this->accessToken) {
+        if (null === $this->access_token) {
             $post_data = [
                 'grant_type'    => 'password',
                 'client_id'     => $this->config->getClientId(),
@@ -57,11 +57,11 @@ class BaseRequest
 
             if (200 == $response->getStatusCode()) {
                 $body = json_decode($response->getBody(true), true);
-                $this->access_token = new AccessToken($body['access_token']);
+                $this->access_token = new AccessToken($body['access_token'], $body['refresh_token'], $body['expires']);
             }
         }
 
-        return $this->accessToken->getAccessToken();
+        return $this->access_token->getAccessToken();
     }
 
     /**
@@ -72,9 +72,9 @@ class BaseRequest
         $headers = array(
             'content-type' => 'application/json',
             'accept' => 'application/json',
-            'authorization' => sprintf('Bearer %s', $this->getAccessToken()),
+            'authorization' => sprintf('Bearer %s', $this->access_token->getAccessToken()),
             'x-prettyprint' => 1,
-            'x-sfdc-session' => substr($this->getAccessToken(), strpos($this->getAccessToken(), '!'))
+            'x-sfdc-session' => substr($this->access_token->getAccessToken(), strpos($this->access_token->getAccessToken(), '!'))
         );
 
         return $headers;
