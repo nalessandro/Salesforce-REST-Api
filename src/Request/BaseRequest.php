@@ -2,7 +2,6 @@
 
 namespace SfRestApi\Request;
 
-use AccessToken;
 use GuzzleHttp\Client;
 use SfRestApi\Contracts\ClientConfigInterface;
 
@@ -16,7 +15,7 @@ class BaseRequest
     /**
      * @var Client
      */
-    protected $guzzleclient;
+    protected $guzzle_client;
 
     /**
      * @var ClientConfigInterface
@@ -27,38 +26,16 @@ class BaseRequest
      * @var AccessToken
      * @access protected
      */
-    protected $accessToken;
-
-    /**
-     * @var mixed
-     * @access protected
-     */
-    protected $isAuthorized;
-
-    /**
-     * @var string
-     * @access protected
-     */
-    protected $baseUrl;
-
-    /**
-     * @var string
-     * @access protected
-     */
-    protected $baseUri;
+    protected $access_token;
 
     /**
      * BaseRequest constructor.
      * @param ClientConfigInterface $config
      */
     public function __construct(ClientConfigInterface $config){
-        $this->isAuthorized   = false;
-        $this->accessToken = new AccessToken();
+
         $this->config = $config;
-
-        $this->baseUri = '/services/data'.$config->getApiVersion();
-
-        $this->guzzleclient = new Client(['base_uri' => $config->baseUrl]);
+        $this->guzzle_client = new Client(['base_uri' => $config->getBaseUri()]);
     }
 
     /**
@@ -66,7 +43,7 @@ class BaseRequest
      */
     protected function getAccessToken()
     {
-        if (null === $this->accessToken->getAccessToken()) {
+        if (null === $this->accessToken) {
             $post_data = [
                 'grant_type'    => 'password',
                 'client_id'     => $this->config->getClientId(),
@@ -76,12 +53,11 @@ class BaseRequest
             ];
 
             $uri = sprintf('%s?%s', '/services/oauth2/token', http_build_query($post_data));
-            $response = $this->guzzleclient->request('POST', $uri);
+            $response = $this->guzzle_client->request('POST', $uri);
 
             if (200 == $response->getStatusCode()) {
                 $body = json_decode($response->getBody(true), true);
-                $this->accessToken->setAccessToken($body['access_token']);
-                $this->isAuthorized = true;
+                $this->access_token = new AccessToken($body['access_token']);
             }
         }
 

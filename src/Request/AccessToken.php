@@ -26,6 +26,13 @@ class AccessToken implements AccessTokenInterface
      */
     protected $token_expires;
 
+    public function __construct(string $access, string $refresh, string $expires)
+    {
+        $this->access_token = $access;
+        $this->refresh_token = $refresh;
+        $this->token_expires = $expires;
+    }
+
     /**
      * @return string
      */
