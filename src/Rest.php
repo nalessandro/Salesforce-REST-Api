@@ -3,7 +3,7 @@
 namespace SfRestApi;
 
 use SfRestApi\Request\Request;
-use SfRestApi\Interfaces\ClientConfigInterface;
+use SfRestApi\Contracts\ClientConfigInterface;
 
 /**
  * Class Rest
@@ -24,7 +24,7 @@ class Rest extends Request
      */
     public function query(String $query):\stdClass
     {
-        $result = $this->makeRequest();
+        $results = $this->makeRequest();
         return $results;
     }
 }

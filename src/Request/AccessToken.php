@@ -1,15 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nalessandro
- * Date: 10/20/17
- * Time: 11:31
- */
 
 namespace SfRestApi\Request;
 
-use SfRestApi\Interfaces\AccessTokenInterface;
+use SfRestApi\Contracts\AccessTokenInterface;
 
+/**
+ * Class AccessToken
+ * @package SfRestApi\Request
+ * @author Nathan Alessandro <nalessan@gmail.com>
+ */
 class AccessToken implements AccessTokenInterface
 {
     /**

@@ -3,7 +3,7 @@
 namespace SfRestApi;
 
 use SfRestApi\Request\ClientConfig;
-use SfRestApi\Interfaces\ClientConfigInterface;
+use SfRestApi\Contracts\ClientConfigInterface;
 
 /**
  * Class Bulk

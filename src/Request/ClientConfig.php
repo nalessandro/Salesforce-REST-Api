@@ -2,7 +2,8 @@
 
 namespace SfRestApi\Request;
 
-use SfRestApi\Interfaces\ClientConfigInterface;
+use SfRestApi\Contracts\ClientConfigInterface;
+
 /**
  * Class ClientConfig
  * @package SfRestApi

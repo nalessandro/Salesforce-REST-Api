@@ -1,6 +1,6 @@
 <?php
 
-namespace SfRestApi\Interfaces;
+namespace SfRestApi\Contracts;
 
 /**
  * Interface AccessTokenInterface

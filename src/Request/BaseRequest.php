@@ -1,14 +1,16 @@
 <?php
-/**
- * CHANGE LOG:
- * 10/20/17 - NJA - Created
- */
+
 namespace SfRestApi\Request;
 
 use GuzzleHttp\Client;
 use AccessToken;
-use SfRestApi\Interfaces\ClientConfigInterface;
+use SfRestApi\Contracts\ClientConfigInterface;
 
+/**
+ * Class BaseRequest
+ * @package SfRestApi\Request
+ * @author Nathan Alessandro <nalessan@gmail.com>
+ */
 class BaseRequest
 {
     /**
