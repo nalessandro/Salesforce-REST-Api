@@ -28,7 +28,7 @@ class Request extends BaseRequest
      * @return \Psr\Http\Message\StreamInterface
      * @throws \Exception
      */
-    public function send(String $method, string $uri, String $body)
+    public function send(String $method, string $uri, String $body): string
     {
         $response = $this->guzzle_client->request($method
                                         ,$uri
@@ -36,7 +36,12 @@ class Request extends BaseRequest
                                             ,'body' => $body
                                             ,'http_errors' => false]
                                         );
+        //var_dump($response);
+        if(strpos($response->getStatusCode(), 2) == 0)
+        {
+            return $response->getBody();
+        }
 
-        return $response->getBody();
+        throw new \Exception('{error: ' . $response->getStatusCode() . ' ' . $response->getReasonPhrase() .'}' );
     }
 }
