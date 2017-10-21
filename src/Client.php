@@ -3,6 +3,7 @@
 namespace SfRestApi;
 
 use SfRestApi\Request\ClientConfig;
+use SfRestApi\Request\Request;
 
 /**
  * Class SalesforceClient
@@ -12,9 +13,9 @@ use SfRestApi\Request\ClientConfig;
 class Client
 {
     /**
-     * @var Rest
+     * @var CRUD
      */
-    protected $rest;
+    public $crud;
 
     /**
      * @var Bulk
@@ -31,21 +32,9 @@ class Client
      * @param String $client_secret
      * @param String $security_token
      */
-    public function __construct(String $login_url
-                                ,String $username
-                                ,String $password
-                                ,String $client_id
-                                ,String $client_secret
-                                ,String $security_token
-    ) {
-        $config = new ClientConfig($login_url, $username, $password, $client_id, $client_secret, $security_token);
-        $this->rest = new Rest($config);
-        $this->bulk = new Bulk($config);
-    }
-
-    public function search(String $query):\stdClass
+    public function __construct( String $jsonParam )
     {
-        $response = $this->rest->query($query);
-        return new \stdClass();
+        $params = json_decode($jsonParam);
+        $this->crud = new CRUD( new ClientConfig($params) );
     }
 }

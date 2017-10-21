@@ -52,22 +52,17 @@ class ClientConfig implements ClientConfigInterface
     private $base_uri = '/services/data';
 
 
-    public function __construct(String $login_url
-                                ,String $username
-                                ,String $password
-                                ,String $client_id
-                                ,String $client_secret
-                                ,string $security_token
-                                ,String $version = 'v41.0'
-    ) {
-        $this->base_url = $login_url;
-        $this->username = $username;
-        $this->password = $password;
-        $this->client_id = $client_id;
-        $this->client_secret = $client_secret;
-        $this->security_token = $security_token;
-        $this->version = $version;
-        $this->base_uri .= '/'.$version;
+    public function __construct(\stdClass $params)
+    {
+        $this->validateParams($params);
+        $this->base_url = $params->login_url;
+        $this->username = $params->username;
+        $this->password = $params->password;
+        $this->client_id = $params->client_id;
+        $this->client_secret = $params->client_secret;
+        $this->security_token = $params->security_token;
+        $this->version = property_exists($params, 'version') ? $params->version : 'v41.0';
+        $this->base_uri .= '/'.$this->version;
     }
 
     /**
@@ -132,5 +127,18 @@ class ClientConfig implements ClientConfigInterface
     public function getBaseUri(): string
     {
         return $this->base_uri;
+    }
+
+    protected function validateParams(\stdClass $params)
+    {
+        $params = json_decode( json_encode($params), true );
+        foreach($params as $k => $v)
+        {
+            if($v == null || $v = '')
+            {
+                throw new \Exception($v . ' is a required field');
+            }
+        }
+
     }
 }

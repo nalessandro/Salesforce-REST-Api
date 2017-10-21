@@ -72,7 +72,7 @@ class BaseRequest
         $headers = array(
             'content-type' => 'application/json',
             'accept' => 'application/json',
-            'authorization' => sprintf('Bearer %s', $this->access_token->getAccessToken()),
+            'authorization' => sprintf('Bearer %s', $this->getAccessToken()),
             'x-prettyprint' => 1,
             'x-sfdc-session' => substr($this->access_token->getAccessToken(), strpos($this->access_token->getAccessToken(), '!'))
         );

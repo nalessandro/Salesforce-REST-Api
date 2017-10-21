@@ -6,11 +6,11 @@ use SfRestApi\Request\Request;
 use SfRestApi\Contracts\ClientConfigInterface;
 
 /**
- * Class Rest
+ * Class CRUD
  * @package SfRestApi
  * @author Nathan Alessandro <nalessan@gmail.com>
  */
-class Rest extends Request
+class CRUD
 {
     public function __construct(ClientConfigInterface $config)
     {
@@ -19,12 +19,15 @@ class Rest extends Request
 
     /**
      * @param String $query
-     * @return \stdClass
+     * @return string
      * @thows \Exception
      */
-    public function query(String $query):\stdClass
+    public function query(String $query): string
     {
-        $results = $this->makeRequest('GET', $this->config->getBaseUri().'/query?q='.str_replace(' ', '+', $query));
+        $results = $this->makeRequest('GET'
+                        ,$this->config->getBaseUri().'/query?q='.str_replace(' ', '+', $query)
+                        ,'');
+
         return $results;
     }
 }

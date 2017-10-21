@@ -54,3 +54,12 @@ class AccessToken implements AccessTokenInterface
     {
         return $this->token_type;
     }
+
+    /**
+     * @param string $token_type
+     */
+    public function setTokenType(string $token_type)
+    {
+        $this->token_type = $token_type;
+    }
+}

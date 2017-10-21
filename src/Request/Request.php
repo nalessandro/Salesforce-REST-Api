@@ -31,7 +31,7 @@ class Request extends BaseRequest
     {
         $response = $this->guzzle_client->request($method
                                         ,$uri
-                                        ,['headers' => $this->getheaders()
+                                        ,['headers' => $this->getHeaders()
                                             ,'body' => $body
                                             ,'http_errors' => false]
                                         );
