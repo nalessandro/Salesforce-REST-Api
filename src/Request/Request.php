@@ -28,7 +28,7 @@ class Request extends BaseRequest
      * @return \Psr\Http\Message\StreamInterface
      * @throws \Exception
      */
-    public function makeRequest(String $method, string $uri, String $body)
+    public function send(String $method, string $uri, String $body)
     {
         $response = $this->guzzle_client->request($method
                                         ,$uri
