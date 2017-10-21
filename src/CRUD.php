@@ -12,9 +12,13 @@ use SfRestApi\Contracts\ClientConfigInterface;
  */
 class CRUD
 {
+    protected $request;
+
+    protected $isBulk = false;
+
     public function __construct(ClientConfigInterface $config)
     {
-        parent::__construct($config);
+        $this->request = new Request($config);
     }
 
     /**
@@ -24,10 +28,47 @@ class CRUD
      */
     public function query(String $query): string
     {
-        $results = $this->makeRequest('GET'
-                        ,$this->config->getBaseUri().'/query?q='.str_replace(' ', '+', $query)
+        $results = $this->request->makeRequest('GET'
+                        ,$this->request->getConfig()->getBaseUri().'/query?q='.str_replace(' ', '+', $query)
                         ,'');
 
         return $results;
+    }
+
+    public function insert(String $object, String $records): string
+    {
+        $results = $this->request->makeRequest('POST'
+                        ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object
+                        ,$records);
+
+        return $results;
+    }
+
+    public function update(String $object, String $records): string
+    {
+        $results = $this->request->makeRequest('POST'
+                        ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object
+                        ,$records);
+
+        return $results;
+    }
+
+    public function delete(String $object, String $records): string
+    {
+        $results = $this->request->makeRequest('POST'
+                    ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object
+                    ,$records);
+
+        return $results;
+    }
+
+    public function setBulk()
+    {
+        $this->isBulk = true;
+    }
+
+    public function unsetBulk()
+    {
+        $this->isBulk = false;
     }
 }

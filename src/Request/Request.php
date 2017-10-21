@@ -21,13 +21,14 @@ class Request extends BaseRequest
     }
 
     /**
-     * Make Request to Salesforce Api
-     *
+     * Make Request to Salesforce
      * @param String $method
      * @param string $uri
      * @param String $body
+     * @return \Psr\Http\Message\StreamInterface
+     * @throws \Exception
      */
-    protected function makeRequest(String $method, string $uri, String $body)
+    public function makeRequest(String $method, string $uri, String $body)
     {
         $response = $this->guzzle_client->request($method
                                         ,$uri

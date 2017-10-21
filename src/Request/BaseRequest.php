@@ -3,6 +3,7 @@
 namespace SfRestApi\Request;
 
 use GuzzleHttp\Client;
+use Psr\Http\Message\RequestInterface;
 use SfRestApi\Contracts\ClientConfigInterface;
 
 /**
@@ -10,7 +11,7 @@ use SfRestApi\Contracts\ClientConfigInterface;
  * @package SfRestApi\Request
  * @author Nathan Alessandro <nalessan@gmail.com>
  */
-class BaseRequest
+class BaseRequest implements RequestInterface
 {
     /**
      * @var Client
@@ -36,6 +37,14 @@ class BaseRequest
     {
         $this->config = $config;
         $this->guzzle_client = new Client(['base_uri' => $config->getBaseUrl()]);
+    }
+
+    /**
+     * @return ClientConfigInterface
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 
     /**

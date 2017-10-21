@@ -18,19 +18,8 @@ class Client
     public $crud;
 
     /**
-     * @var Bulk
-     */
-    protected $bulk;
-
-    /**
      * Client constructor.
-     *
-     * @param String $login_url
-     * @param String $username
-     * @param String $password
-     * @param String $client_id
-     * @param String $client_secret
-     * @param String $security_token
+     * @param String $jsonParam
      */
     public function __construct( String $jsonParam )
     {
