@@ -25,10 +25,10 @@ class AccessToken implements AccessTokenInterface
      * AccessToken constructor.
      * @param array $token
      */
-    public function __construct(array $token)
+    public function __construct(\stdClass $token)
     {
-        $this->access_token = $token['access_token'];
-        $this->token_type = $token['token_type'];
+        $this->access_token = $token->access_token;
+        $this->token_type = $token->token_type;
     }
 
     /**

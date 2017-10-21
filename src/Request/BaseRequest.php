@@ -52,7 +52,8 @@ class BaseRequest implements RequestInterface
      */
     protected function getAccessToken(): string
     {
-        if (null === $this->access_token) {
+        if (null === $this->access_token)
+        {
             $post_data = [
                 'grant_type'    => 'password',
                 'client_id'     => $this->config->getClientId(),
@@ -65,7 +66,7 @@ class BaseRequest implements RequestInterface
             $response = $this->guzzle_client->request('POST', $uri);
 
             if (200 == $response->getStatusCode()) {
-                $body = json_decode($response->getBody(true), true);
+                $body = json_decode($response->getBody(true));
                 $this->access_token = new AccessToken( $body );
             }
         }
@@ -76,7 +77,7 @@ class BaseRequest implements RequestInterface
     /**
      * @return array
      */
-    protected function getHeaders(): array
+    public function getHeaders(): array
     {
         $headers = array(
             'content-type' => 'application/json',

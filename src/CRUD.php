@@ -14,11 +14,12 @@ class CRUD
 {
     protected $request;
 
-    protected $isBulk = false;
+    protected $isBulk;
 
-    public function __construct(ClientConfigInterface $config)
+    public function __construct(ClientConfigInterface $config, bool $isBulk = false)
     {
         $this->request = new Request($config);
+        $this->isBulk = $isBulk;
     }
 
     /**
@@ -82,11 +83,17 @@ class CRUD
         return $results;
     }
 
+    /**
+     * SetBulk sets the CRUD methods to utilize the Salesforce Bulk Api
+     */
     public function setBulk()
     {
         $this->isBulk = true;
     }
 
+    /**
+     * UnsetBulk sets the CRUD methods to use standard Salesforce REST Api
+     */
     public function unsetBulk()
     {
         $this->isBulk = false;
