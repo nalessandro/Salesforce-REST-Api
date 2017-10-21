@@ -57,8 +57,7 @@ class BaseRequest
 
             if (200 == $response->getStatusCode()) {
                 $body = json_decode($response->getBody(true), true);
-                var_dump($body);
-                $this->access_token = new AccessToken($body['access_token'], $body['refresh_token'], $body['expires']);
+                $this->access_token = new AccessToken( $body );
             }
         }
 

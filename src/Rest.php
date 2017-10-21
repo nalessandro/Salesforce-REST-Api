@@ -24,7 +24,7 @@ class Rest extends Request
      */
     public function query(String $query):\stdClass
     {
-        $results = $this->getAccessToken();
+        $results = $this->makeRequest('GET', $this->config->getBaseUri().'/query?q='.str_replace(' ', '+', $query));
         return $results;
     }
 }

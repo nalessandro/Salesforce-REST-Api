@@ -23,9 +23,7 @@ class AccessToken implements AccessTokenInterface
 
     /**
      * AccessToken constructor.
-     * @param string $access
-     * @param string $refresh
-     * @param string $expires
+     * @param array $token
      */
     public function __construct(array $token)
     {
