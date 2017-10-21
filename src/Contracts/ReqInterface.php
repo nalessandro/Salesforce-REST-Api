@@ -2,10 +2,10 @@
 
 namespace SfRestApi\Contracts;
 
-class ReqInterface
+interface RequestInterface
 {
     /**
      * @returns ClientConfig
      */
-    public function getConfig() {}
+    public function getConfig();
 }

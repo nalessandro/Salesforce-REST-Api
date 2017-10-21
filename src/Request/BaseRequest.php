@@ -3,7 +3,7 @@
 namespace SfRestApi\Request;
 
 use GuzzleHttp\Client;
-use SfRestApi\Contracts\ReqInterface as Requests;
+use SfRestApi\Contracts\RequestInterface;
 use SfRestApi\Contracts\ClientConfigInterface;
 
 /**
@@ -11,7 +11,7 @@ use SfRestApi\Contracts\ClientConfigInterface;
  * @package SfRestApi\Request
  * @author Nathan Alessandro <nalessan@gmail.com>
  */
-class BaseRequest implements Requests
+class BaseRequest implements RequestInterface
 {
     /**
      * @var Client
