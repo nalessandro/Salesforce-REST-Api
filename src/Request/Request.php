@@ -36,11 +36,7 @@ class Request extends BaseRequest
                                             ,'body' => $body
                                             ,'http_errors' => false]
                                         );
-        if($response->getStatusCode() == 200)
-        {
-            return $response->getBody();
-        }
 
-        throw new \Exception( $response->getBody() );
+        return $response->getBody();
     }
 }

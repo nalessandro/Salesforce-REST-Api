@@ -42,11 +42,11 @@ class CRUD
      * @param String $records
      * @return string
      */
-    public function insert(String $object, String $records): string
+    public function insert(String $object, String $record): string
     {
         $results = $this->request->send('POST'
                         ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object
-                        ,$records);
+                        ,$record);
 
         return $results;
     }
@@ -58,10 +58,10 @@ class CRUD
      * @param String $records
      * @return string
      */
-    public function update(String $object, String $records): string
+    public function update(String $object, String $id, String $records): string
     {
-        $results = $this->request->send('POST'
-                        ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object
+        $results = $this->request->send('PATCH'
+                        ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object.'/'.$id
                         ,$records);
 
         return $results;
@@ -74,11 +74,11 @@ class CRUD
      * @param String $records
      * @return string
      */
-    public function delete(String $object, String $records): string
+    public function delete(String $object, String $id): string
     {
-        $results = $this->request->send('POST'
-                    ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object
-                    ,$records);
+        $results = $this->request->send('DELETE'
+                    ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object.'/'.$id
+                    ,'');
 
         return $results;
     }
