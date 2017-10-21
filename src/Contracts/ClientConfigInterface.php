@@ -12,7 +12,7 @@ interface ClientConfigInterface
     /**
      * @return string
      */
-    public function getLoginUrl();
+    public function getBaseUrl();
 
     /**
      * @return string

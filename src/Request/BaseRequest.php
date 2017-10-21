@@ -35,13 +35,13 @@ class BaseRequest
     public function __construct( ClientConfigInterface $config )
     {
         $this->config = $config;
-        $this->guzzle_client = new Client(['base_uri' => $config->getBaseUri()]);
+        $this->guzzle_client = new Client(['base_uri' => $config->getBaseUrl()]);
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    protected function getAccessToken()
+    protected function getAccessToken(): string
     {
         if (null === $this->access_token) {
             $post_data = [
@@ -57,6 +57,7 @@ class BaseRequest
 
             if (200 == $response->getStatusCode()) {
                 $body = json_decode($response->getBody(true), true);
+                var_dump($body);
                 $this->access_token = new AccessToken($body['access_token'], $body['refresh_token'], $body['expires']);
             }
         }
@@ -67,7 +68,7 @@ class BaseRequest
     /**
      * @return array
      */
-    protected function getHeaders()
+    protected function getHeaders(): array
     {
         $headers = array(
             'content-type' => 'application/json',

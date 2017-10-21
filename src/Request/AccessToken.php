@@ -19,18 +19,18 @@ class AccessToken implements AccessTokenInterface
     /**
      * @var string
      */
-    protected $refresh_token;
+    protected $token_type;
 
     /**
-     * @var string
+     * AccessToken constructor.
+     * @param string $access
+     * @param string $refresh
+     * @param string $expires
      */
-    protected $token_expires;
-
-    public function __construct(string $access, string $refresh, string $expires)
+    public function __construct(array $token)
     {
-        $this->access_token = $access;
-        $this->refresh_token = $refresh;
-        $this->token_expires = $expires;
+        $this->access_token = $token['access_token'];
+        $this->token_type = $token['token_type'];
     }
 
     /**
@@ -52,32 +52,7 @@ class AccessToken implements AccessTokenInterface
     /**
      * @return string
      */
-    public function getRefreshToken(): string
+    public function getTokenType(): string
     {
-        return $this->refresh_token;
+        return $this->token_type;
     }
-
-    /**
-     * @param string $refresh_token
-     */
-    public function setRefreshToken(string $refresh_token)
-    {
-        $this->refresh_token = $refresh_token;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTokenExpires(): string
-    {
-        return $this->token_expires;
-    }
-
-    /**
-     * @param string $token_expires
-     */
-    public function setTokenExpires(string $token_expires)
-    {
-        $this->token_expires = $token_expires;
-    }
-}

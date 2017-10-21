@@ -12,5 +12,19 @@
             "email": "nalessan@gmail.com"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "require-dev": {
+        "phpunit/phpunit": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "SfRestApi\\":"src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SfRestApi\\":"src/",
+            "Test\\":"test/"
+        }
+    }
 }

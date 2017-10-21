@@ -17,10 +17,5 @@ interface AccessTokenInterface
     /**
      * @return string
      */
-    public function getRefreshToken();
-
-    /**
-     * @return string
-     */
-    public function getTokenExpires();
+    public function getTokenType();
 }

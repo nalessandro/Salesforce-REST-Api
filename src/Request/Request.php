@@ -16,7 +16,7 @@ class Request extends BaseRequest
         parent::__construct($config);
     }
 
-    protected function makeRequest(String $url)
+    protected function makeRequest()
     {
 
     }

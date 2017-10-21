@@ -24,7 +24,7 @@ class Rest extends Request
      */
     public function query(String $query):\stdClass
     {
-        $results = $this->makeRequest();
+        $results = $this->getAccessToken();
         return $results;
     }
 }
