@@ -25,7 +25,7 @@ class Request extends BaseRequest
      * @param String $method
      * @param string $uri
      * @param String $body
-     * @return \Psr\Http\Message\StreamInterface
+     * @return string
      * @throws \Exception
      */
     public function send(String $method, string $uri, String $body): string
@@ -44,4 +44,27 @@ class Request extends BaseRequest
 
         throw new \Exception('{error: ' . $response->getStatusCode() . ' ' . $response->getReasonPhrase() .'}' );
     }
+
+    /**
+     * Preps multiple records to be sent in a Batch
+     *
+     * @param String $object
+     * @param String $records
+     * @return string
+     */
+    public function prepBatch(String $object, String $records)
+    {
+        $recs = json_decode($records, true);
+        $i=0;
+        foreach($recs as $r)
+        {
+             $r['attributes'] = ['type' => $object, 'referenceId' => $object.$i];
+             $recs[$i] = $r;
+             $i++;
+        }
+        $records_batch_formatted['records'] = $recs;
+
+        return json_encode($records_batch_formatted);
+    }
+
 }

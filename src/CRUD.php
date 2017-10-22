@@ -42,13 +42,18 @@ class CRUD
      * @param String $records
      * @return string
      */
-    public function insert(String $object, String $record): string
+    public function insert(String $object, String $records): string
     {
-        $results = $this->request->send('POST'
-                        ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object
-                        ,$record);
+        if( count(json_decode($records)) > 1 )
+        {
+            $records = $this->request->prepBatch($object, $records);
+            $uri = $this->request->getConfig()->getBaseUri().'/composite/tree/'.$object;
+        }
+        else {
+            $uri = $this->request->getConfig()->getBaseUri().'/sobjects/'.$object;
+        }
 
-        return $results;
+        return $this->request->send('POST',$uri,$records);
     }
 
     /**
