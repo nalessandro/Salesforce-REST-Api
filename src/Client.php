@@ -3,7 +3,6 @@
 namespace SfRestApi;
 
 use SfRestApi\Request\ClientConfig;
-use SfRestApi\Request\Request;
 
 /**
  * Class SalesforceClient
@@ -25,5 +24,15 @@ class Client
     {
         $params = json_decode($jsonParam);
         $this->crud = new CRUD( new ClientConfig($params) );
+    }
+
+    /**
+     * @param String $name
+     * @param String $params
+     *
+     * @return string
+     */
+    public function __call(String $name, String $params):string {
+        $this->crud->$name($params);
     }
 }
