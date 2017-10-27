@@ -20,8 +20,12 @@ class TestBulkCrud extends \PHPUnit\Framework\TestCase
         $this->crud = null;
     }
 
+    public function test_set_bulk() {
+        $this->crud->setBulk();
+        $this->assertTrue($this->crud->getBulk());
+    }
 
-    public function test_query() {
+    /*public function test_query() {
         $q = 'SELECT Id, Name, Phone FROM Lead';
         $jsonResult = $this->crud->query($q);
         $records = json_decode($jsonResult);
@@ -53,7 +57,7 @@ class TestBulkCrud extends \PHPUnit\Framework\TestCase
         $response = json_decode($jsonResult);
         $jsonResult = $this->crud->delete('Contact', $response->records[0]->Id);
         $this->assertEmpty($jsonResult);
-    }
+    }*/
 
 
 

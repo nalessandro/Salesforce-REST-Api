@@ -23,12 +23,13 @@ class CRUD
     }
 
     /**
-     * @param array $args
+     * Query Method
+     *
+     * @param $query
      *
      * @return string
      */
-    public function query($query): string
-    {
+    public function query($query): string {
         $results = $this->request->send('GET'
                         ,$this->request->getConfig()->getBaseUri().'/query?q='.str_replace(' ', '+', $query)
                         ,'');
@@ -45,10 +46,9 @@ class CRUD
      */
     public function insert(array $args): string
     {
-        if( count(json_decode($args['records'])) > 1 )
-        {
-            $args['records'] = $this->request->prepBatch($args['object'], $args['records']);
-            $uri = $this->request->getConfig()->getBaseUri().'/composite/tree/'.$args['object'];
+        if( count(json_decode($args['records'])) > 1 ) {
+            $args['records'] = $this->request->prepBatch('insert',$args);
+            $uri = $this->request->getConfig()->getBaseUri().'/composite/batch';
         }
         else {
             $uri = $this->request->getConfig()->getBaseUri().'/sobjects/'.$args['object'];
@@ -66,6 +66,9 @@ class CRUD
      */
     public function update(array $args): string
     {
+        if( count(json_decode($args['records'])) > 1) {
+
+        }
         $results = $this->request->send('PATCH'
                         ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$args['object'].'/'.$args['id']
                         ,$args['records']);
@@ -103,5 +106,9 @@ class CRUD
     public function unsetBulk()
     {
         $this->isBulk = false;
+    }
+
+    public function getBulk(): boolean {
+        return $this->isBulk;
     }
 }

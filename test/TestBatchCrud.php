@@ -20,7 +20,6 @@ class TestBatchCrud extends \PHPUnit\Framework\TestCase
         $this->crud = null;
     }
 
-
     public function test_query() {
         $q = 'SELECT Id, Name, Phone FROM Lead';
         $jsonResult = $this->crud->query($q);
@@ -32,7 +31,7 @@ class TestBatchCrud extends \PHPUnit\Framework\TestCase
         $records = json_encode(['FirstName' => 'Nathan','LastName' => 'Alessandro','Phone' => '7276674434','Email' => 'nalessan@gmail.com']
                                 ,['FirstName' => 'Nathan','LastName' => 'D\'Alessandro','Phone' => '7891234567','Email' => 'nalessan1@gmail.com']
                             );
-        $result = json_decode( $this->crud->insert('Contact', $records) );
+        $result = json_decode( $this->crud->insert(['object' => 'Contact','records' => $records]) );
         $this->assertTrue($result->success);
     }
 
@@ -44,7 +43,7 @@ class TestBatchCrud extends \PHPUnit\Framework\TestCase
         $jsonResult = $this->crud->query($q);
         $response = json_decode($jsonResult);
         $records = json_encode([ 'Phone' => '1234567890']);
-        $jsonResult = $this->crud->update('Contact',$response->records[0]->Id,$records );
+        $jsonResult = $this->crud->update(['object' => 'Contact',$response->records[0]->Id,$records );
         $this->assertEmpty($jsonResult);
     }
 

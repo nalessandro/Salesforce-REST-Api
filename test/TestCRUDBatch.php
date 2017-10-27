@@ -20,7 +20,8 @@ class TestCRUDBatch extends \PHPUnit\Framework\TestCase
         $this->crud = null;
     }
 
-    public function test_create_multiple_records_rest() {
+
+    /*public function test_create_multiple_records_rest() {
         $records = array();
         for($i=0;$i<3;$i++)
         {
@@ -31,6 +32,6 @@ class TestCRUDBatch extends \PHPUnit\Framework\TestCase
         }
         $response = $this->crud->insert('Contact', json_encode($records));
         var_dump($response);
-    }
+    }*/
 
 }

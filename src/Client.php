@@ -16,6 +16,8 @@ class Client
      */
     private $crud;
 
+    private $batch;
+
     /**
      * Client constructor.
      * @param String $jsonParam
@@ -32,7 +34,13 @@ class Client
      *
      * @return string
      */
-    public function __call(string $name, array $params): string {
-        return $this->crud->$name( $params[0] );
+    public function __call(string $name, array $params) {
+
+        if( array_key_exists('records', $params[0]) && count($params[0]['records']) > 1 )
+            $result = $this->batch->$name($params[0]);
+        else
+            $result = $this->crud->$name($params[0]);
+
+        return $result;
     }
 }

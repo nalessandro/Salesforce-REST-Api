@@ -22,6 +22,7 @@ class Request extends BaseRequest
 
     /**
      * Make Request to Salesforce
+     *
      * @param String $method
      * @param string $uri
      * @param String $body
@@ -37,8 +38,7 @@ class Request extends BaseRequest
                                             ,'http_errors' => false]
                                         );
         //var_dump($response);
-        if(strpos($response->getStatusCode(), 2) == 0)
-        {
+        if(strpos($response->getStatusCode(), 2) == 0) {
             return $response->getBody();
         }
 
@@ -48,23 +48,30 @@ class Request extends BaseRequest
     /**
      * Preps multiple records to be sent in a Batch
      *
-     * @param String $object
-     * @param String $records
-     * @return string
+     * @param String $method
+     * @param array  $args
+     *
+     * @return array
      */
-    public function prepBatch(String $object, String $records)
-    {
-        $recs = json_decode($records, true);
-        $i=0;
-        foreach($recs as $r)
-        {
-             $r['attributes'] = ['type' => $object, 'referenceId' => $object.$i];
-             $recs[$i] = $r;
-             $i++;
-        }
-        $records_batch_formatted['records'] = $recs;
+    public function prepBatch(String $method, array $args) {
 
-        return json_encode($records_batch_formatted);
+        $i=0;
+        $batched = array();
+        $r1 = array();
+        foreach($args as $r) {
+            $r['method'] = $method,
+            $r['url'] = $this->getConfig()->getApiVersion() . "/sobjects/" . $args['object'] . '/' . $r['id'],
+            $r['richInput'] = $r;
+            $r1[] = $r;
+            $i++;
+
+            if($i%200 == 0) {
+                $batched[] = $r1;
+                $r1 = array();
+            }
+        }
+
+        return $batched;
     }
 
 }
