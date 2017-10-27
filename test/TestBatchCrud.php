@@ -2,7 +2,7 @@
 
 namespace Test;
 
-class TestCrud extends \PHPUnit\Framework\TestCase
+class TestBatchCrud extends \PHPUnit\Framework\TestCase
 {
     protected $crud;
 
@@ -13,7 +13,7 @@ class TestCrud extends \PHPUnit\Framework\TestCase
             ,'client_id' => Config::getClientId()
             ,'client_secret' => Config::getClientSecret()
             ,'security_token' => Config::getSecurityToken()]));
-        $this->crud = new \SfRestApi\CRUD( new \SfRestApi\Request\ClientConfig($params) );
+        $this->crud = new \SfRestApi\Client( json_encode($params) );
     }
 
     public function tearDown() {
@@ -29,18 +29,18 @@ class TestCrud extends \PHPUnit\Framework\TestCase
     }
 
     public function test_create() {
-        $records = json_encode(['FirstName' => 'Nathan'
-                            ,'LastName' => 'Alessandro'
-                            ,'Phone' => '7276674434'
-                            ,'Email' => 'nalessan@gmail.com'
-                ]);
-
+        $records = json_encode(['FirstName' => 'Nathan','LastName' => 'Alessandro','Phone' => '7276674434','Email' => 'nalessan@gmail.com']
+                                ,['FirstName' => 'Nathan','LastName' => 'D\'Alessandro','Phone' => '7891234567','Email' => 'nalessan1@gmail.com']
+                            );
         $result = json_decode( $this->crud->insert('Contact', $records) );
         $this->assertTrue($result->success);
     }
 
     public function test_update() {
-        $q = "SELECT Id FROM Contact WHERE Phone = '7276674434' and Email ='nalessan@gmail.com' and isDeleted = false LIMIT 1";
+        $q = "SELECT Id 
+              FROM Contact 
+              WHERE Phone IN ('7276674434','7891234567') 
+                and Email IN ('nalessan@gmail.com','nalessan1@gmail.com') and isDeleted = false LIMIT 1";
         $jsonResult = $this->crud->query($q);
         $response = json_decode($jsonResult);
         $records = json_encode([ 'Phone' => '1234567890']);
@@ -55,7 +55,4 @@ class TestCrud extends \PHPUnit\Framework\TestCase
         $jsonResult = $this->crud->delete('Contact', $response->records[0]->Id);
         $this->assertEmpty($jsonResult);
     }
-
-
-
 }

@@ -14,7 +14,7 @@ class Client
     /**
      * @var CRUD
      */
-    public $crud;
+    private $crud;
 
     /**
      * Client constructor.
@@ -27,12 +27,12 @@ class Client
     }
 
     /**
-     * @param String $name
-     * @param String $params
+     * @param string $name
+     * @param array $params
      *
      * @return string
      */
-    public function __call(String $name, String $params):string {
-        $this->crud->$name($params);
+    public function __call(string $name, array $params): string {
+        return $this->crud->$name( $params[0] );
     }
 }

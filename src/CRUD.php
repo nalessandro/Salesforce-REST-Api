@@ -23,10 +23,11 @@ class CRUD
     }
 
     /**
-     * @param String $query
+     * @param array $args
+     *
      * @return string
      */
-    public function query(String $query): string
+    public function query($query): string
     {
         $results = $this->request->send('GET'
                         ,$this->request->getConfig()->getBaseUri().'/query?q='.str_replace(' ', '+', $query)
@@ -38,36 +39,36 @@ class CRUD
     /**
      * Insert Method
      *
-     * @param String $object
-     * @param String $records
+     * @param array $args
+     *
      * @return string
      */
-    public function insert(String $object, String $records): string
+    public function insert(array $args): string
     {
-        if( count(json_decode($records)) > 1 )
+        if( count(json_decode($args['records'])) > 1 )
         {
-            $records = $this->request->prepBatch($object, $records);
-            $uri = $this->request->getConfig()->getBaseUri().'/composite/tree/'.$object;
+            $args['records'] = $this->request->prepBatch($args['object'], $args['records']);
+            $uri = $this->request->getConfig()->getBaseUri().'/composite/tree/'.$args['object'];
         }
         else {
-            $uri = $this->request->getConfig()->getBaseUri().'/sobjects/'.$object;
+            $uri = $this->request->getConfig()->getBaseUri().'/sobjects/'.$args['object'];
         }
 
-        return $this->request->send('POST',$uri,$records);
+        return $this->request->send('POST',$uri,$args['records']);
     }
 
     /**
      * Update Method
      *
-     * @param String $object
-     * @param String $records
+     * @param array $args
+     *
      * @return string
      */
-    public function update(String $object, String $id, String $records): string
+    public function update(array $args): string
     {
         $results = $this->request->send('PATCH'
-                        ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object.'/'.$id
-                        ,$records);
+                        ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$args['object'].'/'.$args['id']
+                        ,$args['records']);
 
         return $results;
     }
@@ -75,14 +76,14 @@ class CRUD
     /**
      * Delete Method
      *
-     * @param String $object
-     * @param String $records
+     * @param array $args
+     *
      * @return string
      */
-    public function delete(String $object, String $id): string
+    public function delete(array $args): string
     {
         $results = $this->request->send('DELETE'
-                    ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$object.'/'.$id
+                    ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$args['object'].'/'.$args['id']
                     ,'');
 
         return $results;

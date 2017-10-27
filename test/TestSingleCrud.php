@@ -2,7 +2,7 @@
 
 namespace Test;
 
-class TestCrud extends \PHPUnit\Framework\TestCase
+class TestSingleCrud extends \PHPUnit\Framework\TestCase
 {
     protected $crud;
 
@@ -13,7 +13,7 @@ class TestCrud extends \PHPUnit\Framework\TestCase
             ,'client_id' => Config::getClientId()
             ,'client_secret' => Config::getClientSecret()
             ,'security_token' => Config::getSecurityToken()]));
-        $this->crud = new \SfRestApi\CRUD( new \SfRestApi\Request\ClientConfig($params) );
+        $this->crud = new \SfRestApi\Client( json_encode($params) );
     }
 
     public function tearDown() {
@@ -34,8 +34,7 @@ class TestCrud extends \PHPUnit\Framework\TestCase
                             ,'Phone' => '7276674434'
                             ,'Email' => 'nalessan@gmail.com'
                 ]);
-
-        $result = json_decode( $this->crud->insert('Contact', $records) );
+        $result = json_decode( $this->crud->insert(['object' => 'Contact', 'records' => $records]) );
         $this->assertTrue($result->success);
     }
 
@@ -44,7 +43,7 @@ class TestCrud extends \PHPUnit\Framework\TestCase
         $jsonResult = $this->crud->query($q);
         $response = json_decode($jsonResult);
         $records = json_encode([ 'Phone' => '1234567890']);
-        $jsonResult = $this->crud->update('Contact',$response->records[0]->Id,$records );
+        $jsonResult = $this->crud->update(['object' => 'Contact', 'id' => $response->records[0]->Id,'records' => $records]);
         $this->assertEmpty($jsonResult);
     }
 
@@ -52,7 +51,7 @@ class TestCrud extends \PHPUnit\Framework\TestCase
         $q = "SELECT Id FROM Contact WHERE Phone = '1234567890' and Email ='nalessan@gmail.com' and isDeleted = false";
         $jsonResult = $this->crud->query($q);
         $response = json_decode($jsonResult);
-        $jsonResult = $this->crud->delete('Contact', $response->records[0]->Id);
+        $jsonResult = $this->crud->delete(['object' => 'Contact', 'id' => $response->records[0]->Id]);
         $this->assertEmpty($jsonResult);
     }
 

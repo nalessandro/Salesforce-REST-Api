@@ -2,7 +2,7 @@
 
 namespace Test;
 
-class TestCrud extends \PHPUnit\Framework\TestCase
+class TestBulkCrud extends \PHPUnit\Framework\TestCase
 {
     protected $crud;
 
@@ -13,7 +13,7 @@ class TestCrud extends \PHPUnit\Framework\TestCase
             ,'client_id' => Config::getClientId()
             ,'client_secret' => Config::getClientSecret()
             ,'security_token' => Config::getSecurityToken()]));
-        $this->crud = new \SfRestApi\CRUD( new \SfRestApi\Request\ClientConfig($params) );
+        $this->crud = new \SfRestApi\Client( json_encode($params) );
     }
 
     public function tearDown() {
@@ -34,7 +34,6 @@ class TestCrud extends \PHPUnit\Framework\TestCase
                             ,'Phone' => '7276674434'
                             ,'Email' => 'nalessan@gmail.com'
                 ]);
-
         $result = json_decode( $this->crud->insert('Contact', $records) );
         $this->assertTrue($result->success);
     }

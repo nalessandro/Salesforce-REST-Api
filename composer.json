@@ -17,15 +17,8 @@
         "phpunit/phpunit": "^6.2"
     },
     "autoload": {
-        "psr-0": {
-            "SfRestApi\\":"src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-0": {
-            "SfRestApi\\":"src/"
-        },
-        "psr-4" : {
+        "psr-4": {
+            "SfRestApi\\":"src/",
             "Test\\":"test/"
         }
     }
