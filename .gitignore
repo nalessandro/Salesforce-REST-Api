@@ -1,4 +1,4 @@
 .idea/
 /vendor/
-/src/test/Config.php
+test/Config.php
 blah.php
