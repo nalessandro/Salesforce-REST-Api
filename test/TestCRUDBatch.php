@@ -1,17 +1,20 @@
 <?php
 
+namespace Test;
+
 class TestCRUDBatch extends \PHPUnit\Framework\TestCase
 {
     protected $crud;
 
     public function setUp()
     {
+        $config = new Config();
         $params = json_decode(json_encode(['login_url' => 'https://na73.salesforce.com'
-            ,'username' => 'nalessan@njafreelance.com'
-            ,'password' => 'Sal!24esForce'
-            ,'client_id' => '3MVG9g9rbsTkKnAWggzVdrX3.xMGLuDeHUtWUGa0dVA2M2I7anh6qfG50lUWZEYyoRh65ZcIRrC.GyxG37pzK'
-            ,'client_secret' => '6302695765669590000'
-            ,'security_token' => 'HlRqoQT4Ysv1dmumtDWtLZrtH']));
+            ,'username' => $config->USERNAME
+            ,'password' => $config->PASSWORD
+            ,'client_id' => $config->CLIENT_ID
+            ,'client_secret' => $config->CLIENT_SECRET
+            ,'security_token' => $config->SECURITY_TOKEN]));
         $this->crud = new SfRestApi\CRUD( new SfRestApi\Request\ClientConfig($params) );
     }
 
