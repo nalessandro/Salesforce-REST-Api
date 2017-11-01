@@ -1,25 +1,30 @@
 <?php
 
-namespace Test;
+namespace Test\crud;
 
-class TestSingleCrud extends \PHPUnit\Framework\TestCase
+class testRequest extends \PHPUnit\Framework\TestCase
 {
     protected $crud;
 
     public function setUp() {
-        $params = json_decode(json_encode(['login_url' => 'https://na73.salesforce.com'
-            ,'username' => Config::getUsername()
-            ,'password' => Config::getPass()
-            ,'client_id' => Config::getClientId()
-            ,'client_secret' => Config::getClientSecret()
-            ,'security_token' => Config::getSecurityToken()]));
-        $this->crud = new \SfRestApi\Client( json_encode($params) );
+        $params = array('login_url' => 'https://na73.salesforce.com'
+            ,'username' => \Test\Config::getUsername()
+            ,'password' => \Test\Config::getPass()
+            ,'client_id' => \Test\Config::getClientId()
+            ,'client_secret' => \Test\Config::getClientSecret()
+            ,'security_token' => \Test\Config::getSecurityToken() );
+        $this->crud = new \SfRestApi\Client( json_encode( $params ));
     }
 
     public function tearDown() {
         $this->crud = null;
     }
 
+    public function test_base_request_initialized() {
+        $this->assertInstanceOf(\SfRestApi\Client::class, $this->crud);
+        $this->assertInstanceOf(\SfRestApi\Request\ClientConfig::class, $this->crud->getConfig());
+        $this->assertInstanceOf(\SfRestApi\Request\Request::class, $this->crud->getInstance());
+    }
 
     public function test_query() {
         $q = 'SELECT Id, Name, Phone FROM Lead';
@@ -30,10 +35,10 @@ class TestSingleCrud extends \PHPUnit\Framework\TestCase
 
     public function test_create() {
         $records = json_encode(['FirstName' => 'Nathan'
-                            ,'LastName' => 'Alessandro'
-                            ,'Phone' => '7276674434'
-                            ,'Email' => 'nalessan@gmail.com'
-                ]);
+            ,'LastName' => 'Alessandro'
+            ,'Phone' => '7276674434'
+            ,'Email' => 'nalessan@gmail.com'
+        ]);
         $result = json_decode( $this->crud->insert(['object' => 'Contact', 'records' => $records]) );
         $this->assertTrue($result->success);
     }
@@ -54,7 +59,4 @@ class TestSingleCrud extends \PHPUnit\Framework\TestCase
         $jsonResult = $this->crud->delete(['object' => 'Contact', 'id' => $response->records[0]->Id]);
         $this->assertEmpty($jsonResult);
     }
-
-
-
 }

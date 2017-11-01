@@ -4,17 +4,12 @@ namespace SfRestApi\Contracts;
 
 interface RequestInterface
 {
-    /**
-     * @returns ClientConfig
-     */
-    public function getConfig();
+    public function query( string $q );
 
-    public function query();
+    public function insert( array $args );
 
-    public function insert();
+    public function update( array $args );
 
-    public function update();
-
-    public function delete();
+    public function delete( array $args );
 
 }

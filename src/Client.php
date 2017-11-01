@@ -4,6 +4,7 @@ namespace SfRestApi;
 
 use SfRestApi\Request\ClientConfig;
 use SfRestApi\Request\BaseRequest;
+use SfRestApi\Factory\RequestFactory;
 
 /**
  * Class SalesforceClient
@@ -12,12 +13,25 @@ use SfRestApi\Request\BaseRequest;
  */
 class Client
 {
+    protected static $_instance;
+
     /**
      * Client constructor.
-     * @param String $jsonParam
+     *
+     * @param string $jsonParam
+     * @param String $type
      */
-    public function __construct( String $jsonParam ) {
+    public function __construct( string $jsonParam, String $type = '' ) {
         BaseRequest::init( new ClientConfig( json_decode($jsonParam) ) );
+        self::$_instance = RequestFactory::init($type);
+    }
+
+    public function getConfig() {
+        return self::$_instance->getConfig();
+    }
+
+    public function getInstance() {
+        return self::$_instance;
     }
 
     /**
@@ -27,9 +41,6 @@ class Client
      * @return string
      */
     public function __call(string $name, array $params) {
-
-        $params[0]['method'] = $name;
-        $crud = CRUD::init();
-        $crud->process( json_decode( $params[0] ) );
+        return self::$_instance->$name( $params[0] );
     }
 }

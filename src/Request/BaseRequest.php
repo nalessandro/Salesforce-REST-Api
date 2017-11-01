@@ -29,25 +29,17 @@ class BaseRequest //implements RequestInterface
      */
     protected $access_token;
 
+
+
     public static function init( ClientConfigInterface $config ) {
         self::$config = $config;
         self::$guzzle_client = new Client(['base_uri' => $config->getBaseUrl()]);
     }
 
     /**
-     * BaseRequest constructor.
-     * @param ClientConfigInterface $config
-     */
-    /*public function __construct( ClientConfigInterface $config )
-    {
-
-    }*/
-
-    /**
      * @return ClientConfigInterface
      */
-    public function getConfig()
-    {
+    public function getConfig() {
         return self::$config;
     }
 
@@ -85,14 +77,14 @@ class BaseRequest //implements RequestInterface
         {
             $post_data = [
                 'grant_type'    => 'password',
-                'client_id'     => $this->config->getClientId(),
-                'client_secret' => $this->config->getClientSecret(),
-                'username'      => $this->config->getUsername(),
-                'password'      => $this->config->getPassword().$this->config->getSecurityToken(),
+                'client_id'     => self::$config->getClientId(),
+                'client_secret' => self::$config->getClientSecret(),
+                'username'      => self::$config->getUsername(),
+                'password'      => self::$config->getPassword().self::$config->getSecurityToken(),
             ];
 
             $uri = sprintf('%s?%s', '/services/oauth2/token', http_build_query($post_data));
-            $response = $this->guzzle_client->request('POST', $uri);
+            $response = self::$guzzle_client->request('POST', $uri);
 
             if (200 == $response->getStatusCode()) {
                 $body = json_decode($response->getBody(true));
