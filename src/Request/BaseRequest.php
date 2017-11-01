@@ -11,7 +11,7 @@ use SfRestApi\Contracts\ClientConfigInterface;
  * @package SfRestApi\Request
  * @author Nathan Alessandro <nalessan@gmail.com>
  */
-class BaseRequest implements RequestInterface
+class BaseRequest //implements RequestInterface
 {
     /**
      * @var Client
