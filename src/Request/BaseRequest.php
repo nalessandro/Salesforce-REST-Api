@@ -16,12 +16,12 @@ class BaseRequest implements RequestInterface
     /**
      * @var Client
      */
-    protected $guzzle_client;
+    protected static $guzzle_client;
 
     /**
      * @var ClientConfigInterface
      */
-    protected $config;
+    protected static $config;
 
     /**
      * @var AccessToken
@@ -29,22 +29,51 @@ class BaseRequest implements RequestInterface
      */
     protected $access_token;
 
+    public static function init( ClientConfigInterface $config ) {
+        self::$config = $config;
+        self::$guzzle_client = new Client(['base_uri' => $config->getBaseUrl()]);
+    }
+
     /**
      * BaseRequest constructor.
      * @param ClientConfigInterface $config
      */
-    public function __construct( ClientConfigInterface $config )
+    /*public function __construct( ClientConfigInterface $config )
     {
-        $this->config = $config;
-        $this->guzzle_client = new Client(['base_uri' => $config->getBaseUrl()]);
-    }
+
+    }*/
 
     /**
      * @return ClientConfigInterface
      */
     public function getConfig()
     {
-        return $this->config;
+        return self::$config;
+    }
+
+    /**
+     * Make Request to Salesforce
+     *
+     * @param String $method
+     * @param string $uri
+     * @param String $body
+     * @return string
+     * @throws \Exception
+     */
+    public function send(String $method, string $uri, String $body): string
+    {
+        $response = self::$guzzle_client->request($method
+            ,$uri
+            ,['headers' => $this->getHeaders()
+                ,'body' => $body
+                ,'http_errors' => false]
+        );
+        //var_dump($response);
+        if(strpos($response->getStatusCode(), 2) == 0) {
+            return $response->getBody();
+        }
+
+        throw new \Exception('{error: ' . $response->getStatusCode() . ' ' . $response->getReasonPhrase() .'}' );
     }
 
     /**
@@ -77,7 +106,7 @@ class BaseRequest implements RequestInterface
     /**
      * @return array
      */
-    public function getHeaders(): array
+    protected function getHeaders(): array
     {
         $headers = array(
             'content-type' => 'application/json',

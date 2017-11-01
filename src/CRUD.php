@@ -2,8 +2,11 @@
 
 namespace SfRestApi;
 
-use SfRestApi\Request\Request;
+use SfRestApi\Request\ClientConfig;
 use SfRestApi\Contracts\ClientConfigInterface;
+use SfRestApi\Request\Request;
+use SfRestApi\Request\BatchRequest;
+use SfRestApi\Request\TreeRequest;
 
 /**
  * Class CRUD
@@ -12,14 +15,28 @@ use SfRestApi\Contracts\ClientConfigInterface;
  */
 class CRUD
 {
-    protected $request;
+    public function process(\stdClass $args ) {
 
-    protected $isBulk;
+        if( property_exists($args, 'type') )
+            $this->$args['type']($args);
+        else
+            $this->single( $args );
+    }
 
-    public function __construct(ClientConfigInterface $config, bool $isBulk = false)
-    {
-        $this->request = new Request($config);
-        $this->isBulk = $isBulk;
+    protected function bulk( $args ) {
+
+    }
+
+    protected function batch( $args ) {
+
+    }
+
+    protected function composite( $args ) {
+
+    }
+
+    protected function single( $args ) {
+
     }
 
     /**
@@ -66,9 +83,6 @@ class CRUD
      */
     public function update(array $args): string
     {
-        if( count(json_decode($args['records'])) > 1) {
-
-        }
         $results = $this->request->send('PATCH'
                         ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$args['object'].'/'.$args['id']
                         ,$args['records']);

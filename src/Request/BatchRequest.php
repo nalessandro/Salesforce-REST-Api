@@ -2,12 +2,14 @@
 
 namespace SfRestApi\Request;
 
+use SfRestApi\Contracts\RequestInterface;
+
 /**
  * Class BatchRequest
  *
  * @package SfRestApi\Request
  */
-class BatchRequest extends Request
+class BatchRequest extends BaseRequest implements RequestInterface
 {
     /**
      * Insert Method

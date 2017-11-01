@@ -129,16 +129,11 @@ class ClientConfig implements ClientConfigInterface
         return $this->base_uri;
     }
 
-    protected function validateParams(\stdClass $params)
-    {
-        $params = json_decode( json_encode($params), true );
-        foreach($params as $k => $v)
-        {
-            if($v == null || $v = '')
-            {
-                throw new \Exception($v . ' is a required field');
+    protected function validateParams(\stdClass $params) {
+        foreach($params as $k => $v) {
+            if($v == null || $v = '') {
+                throw new \Exception($v . ' is a required parameter value');
             }
         }
-
     }
 }
