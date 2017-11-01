@@ -12,15 +12,12 @@ use SfRestApi\Request\BaseRequest;
  */
 class Client
 {
-    protected $crud;
-
     /**
      * Client constructor.
      * @param String $jsonParam
      */
     public function __construct( String $jsonParam ) {
         BaseRequest::init( new ClientConfig( json_decode($jsonParam) ) );
-        $this->crud = new Crud();
     }
 
     /**
@@ -32,7 +29,7 @@ class Client
     public function __call(string $name, array $params) {
 
         $params[0]['method'] = $name;
-        $this->crud->process( json_decode( $params[0] ) );
-        //return $result;
+        $crud = CRUD::init();
+        $crud->process( json_decode( $params[0] ) );
     }
 }

@@ -15,10 +15,14 @@ use SfRestApi\Request\TreeRequest;
  */
 class CRUD
 {
+    public static function init() {
+        return new self();
+    }
+
     public function process(\stdClass $args ) {
 
         if( property_exists($args, 'type') )
-            $this->$args['type']($args);
+            $this->$args->type($args);
         else
             $this->single( $args );
     }
