@@ -26,21 +26,34 @@ class Client
         self::$_instance = RequestFactory::init($type);
     }
 
+    /**
+     * Returns the initialized configuration
+     *
+     * @return Contracts\ClientConfigInterface
+     */
     public function getConfig() {
         return self::$_instance->getConfig();
     }
 
+    /**
+     * Returns the instantiated instance
+     *
+     * @return Request|BatchRequest|CompositeRequest|TreeRequest
+     */
     public function getInstance() {
         return self::$_instance;
     }
 
     /**
-     * @param string $name
+     * Magic Method to handle standard CRUD calls and forward
+     * on to instance specific logic
+     *
+     * @param string $method    query|insert|update|delete
      * @param array $params
      *
      * @return string
      */
-    public function __call(string $name, array $params) {
-        return self::$_instance->$name( $params[0] );
+    public function __call(string $method, array $params) {
+        return self::$_instance->$method( $params[0] );
     }
 }

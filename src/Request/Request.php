@@ -36,6 +36,11 @@ class Request extends BaseRequest implements RequestInterface
         return $results;
     }
 
+    public static function _query( string $q ) {
+        return self::$_instance->query($q);
+    }
+
+
     public function insert (array $args) {
         $uri = $this->getConfig()->getBaseUri().'/sobjects/'.$args['object'];
         return $this->send('POST',$uri,$args['records']);
@@ -47,7 +52,6 @@ class Request extends BaseRequest implements RequestInterface
             ,$args['records']);
         return $results;
     }
-
 
     public function delete (array $args) {
         $results = $this->send('DELETE'

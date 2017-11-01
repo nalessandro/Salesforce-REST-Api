@@ -1,23 +1,31 @@
 <?php
 
-namespace Test;
+namespace Test\crud;
 
-class TestBatchCrud extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class testBatchRequest extends TestCase
 {
     protected $crud;
 
     public function setUp() {
-        $params = json_decode(json_encode(['login_url' => 'https://na73.salesforce.com'
-            ,'username' => Config::getUsername()
-            ,'password' => Config::getPass()
-            ,'client_id' => Config::getClientId()
-            ,'client_secret' => Config::getClientSecret()
-            ,'security_token' => Config::getSecurityToken()]));
-        $this->crud = new \SfRestApi\Client( json_encode($params) );
+        $params = array('login_url' => 'https://na73.salesforce.com'
+        ,'username' => \Test\Config::getUsername()
+        ,'password' => \Test\Config::getPass()
+        ,'client_id' => \Test\Config::getClientId()
+        ,'client_secret' => \Test\Config::getClientSecret()
+        ,'security_token' => \Test\Config::getSecurityToken() );
+        $this->crud = new \SfRestApi\Client( json_encode( $params ), 'Batch');
     }
 
     public function tearDown() {
         $this->crud = null;
+    }
+
+    public function test_base_request_initialized() {
+        $this->assertInstanceOf(\SfRestApi\Client::class, $this->crud);
+        $this->assertInstanceOf(\SfRestApi\Request\ClientConfig::class, $this->crud->getConfig());
+        $this->assertInstanceOf(\SfRestApi\Request\BatchRequest::class, $this->crud->getInstance());
     }
 
     public function test_query() {
@@ -27,23 +35,23 @@ class TestBatchCrud extends \PHPUnit\Framework\TestCase
         $this->assertGreaterThan(0,$records->totalSize);
     }
 
-    public function test_create() {
+    /*public function test_create() {
         $records = json_encode(['FirstName' => 'Nathan','LastName' => 'Alessandro','Phone' => '7276674434','Email' => 'nalessan@gmail.com']
-                                ,['FirstName' => 'Nathan','LastName' => 'D\'Alessandro','Phone' => '7891234567','Email' => 'nalessan1@gmail.com']
-                            );
+            ,['FirstName' => 'Nathan','LastName' => 'D\'Alessandro','Phone' => '7891234567','Email' => 'nalessan1@gmail.com']
+        );
         $result = json_decode( $this->crud->insert(['object' => 'Contact','records' => $records]) );
         $this->assertTrue($result->success);
     }
 
     public function test_update() {
-        $q = "SELECT Id 
-              FROM Contact 
-              WHERE Phone IN ('7276674434','7891234567') 
+        $q = "SELECT Id
+              FROM Contact
+              WHERE Phone IN ('7276674434','7891234567')
                 and Email IN ('nalessan@gmail.com','nalessan1@gmail.com') and isDeleted = false LIMIT 1";
         $jsonResult = $this->crud->query($q);
         $response = json_decode($jsonResult);
         $records = json_encode([ 'Phone' => '1234567890']);
-        $jsonResult = $this->crud->update(['object' => 'Contact',$response->records[0]->Id,$records );
+        $jsonResult = $this->crud->update(['object' => 'Contact',$response->records[0]->Id,$records] );
         $this->assertEmpty($jsonResult);
     }
 
@@ -53,5 +61,5 @@ class TestBatchCrud extends \PHPUnit\Framework\TestCase
         $response = json_decode($jsonResult);
         $jsonResult = $this->crud->delete('Contact', $response->records[0]->Id);
         $this->assertEmpty($jsonResult);
-    }
+    }*/
 }
