@@ -29,31 +29,26 @@ class Request extends BaseRequest implements RequestInterface
         return self::$_instance;
     }
 
-    public function query( String $q ) {
+    public function query (string $q): \stdClass {
         $results = $this->send('GET'
             ,$this->getConfig()->getBaseUri().'/query?q='.str_replace(' ', '+', $q)
             ,'');
         return $results;
     }
 
-    public static function _query( string $q ) {
-        return self::$_instance->query($q);
-    }
-
-
-    public function insert (array $args) {
+    public function insert (array $args): \stdClass {
         $uri = $this->getConfig()->getBaseUri().'/sobjects/'.$args['object'];
         return $this->send('POST',$uri,$args['records']);
     }
 
-    public function update (array $args) {
+    public function update (array $args): \stdClass {
         $results = $this->send('PATCH'
             ,$this->getConfig()->getBaseUri().'/sobjects/'.$args['object'].'/'.$args['id']
             ,$args['records']);
         return $results;
     }
 
-    public function delete (array $args) {
+    public function delete (array $args): \stdClass {
         $results = $this->send('DELETE'
             ,$this->getConfig()->getBaseUri().'/sobjects/'.$args['object'].'/'.$args['id']
             ,'');

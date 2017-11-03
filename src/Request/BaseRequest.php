@@ -16,12 +16,12 @@ class BaseRequest //implements RequestInterface
     /**
      * @var Client
      */
-    protected static $guzzle_client;
+    protected static $_guzzle_client;
 
     /**
      * @var ClientConfigInterface
      */
-    protected static $config;
+    protected static $_config;
 
     /**
      * @var AccessToken
@@ -31,16 +31,16 @@ class BaseRequest //implements RequestInterface
 
 
 
-    public static function init( ClientConfigInterface $config ) {
-        self::$config = $config;
-        self::$guzzle_client = new Client(['base_uri' => $config->getBaseUrl()]);
+    public static function init( ClientConfigInterface $_config ) {
+        self::$_config = $_config;
+        self::$_guzzle_client = new Client(['base_uri' => $_config->getBaseUrl()]);
     }
 
     /**
      * @return ClientConfigInterface
      */
     public function getConfig() {
-        return self::$config;
+        return self::$_config;
     }
 
     /**
@@ -54,7 +54,7 @@ class BaseRequest //implements RequestInterface
      */
     public function send(String $method, string $uri, String $body): string
     {
-        $response = self::$guzzle_client->request($method
+        $response = self::$_guzzle_client->request($method
             ,$uri
             ,['headers' => $this->getHeaders()
                 ,'body' => $body
@@ -77,14 +77,14 @@ class BaseRequest //implements RequestInterface
         {
             $post_data = [
                 'grant_type'    => 'password',
-                'client_id'     => self::$config->getClientId(),
-                'client_secret' => self::$config->getClientSecret(),
-                'username'      => self::$config->getUsername(),
-                'password'      => self::$config->getPassword().self::$config->getSecurityToken(),
+                'client_id'     => self::$_config->getClientId(),
+                'client_secret' => self::$_config->getClientSecret(),
+                'username'      => self::$_config->getUsername(),
+                'password'      => self::$_config->getPassword().self::$_config->getSecurityToken(),
             ];
 
             $uri = sprintf('%s?%s', '/services/oauth2/token', http_build_query($post_data));
-            $response = self::$guzzle_client->request('POST', $uri);
+            $response = self::$_guzzle_client->request('POST', $uri);
 
             if (200 == $response->getStatusCode()) {
                 $body = json_decode($response->getBody(true));

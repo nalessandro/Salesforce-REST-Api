@@ -30,16 +30,15 @@ class testBatchRequest extends TestCase
 
     public function test_query() {
         $q = 'SELECT Id, Name, Phone FROM Lead';
-        $jsonResult = $this->crud->query($q);
-        $records = json_decode($jsonResult);
-        $this->assertGreaterThan(0,$records->totalSize);
+        $response = $this->crud->query($q);
+        $this->assertGreaterThan(0,$response->totalSize);
     }
 
-    /*public function test_create() {
-        $records = json_encode(['FirstName' => 'Nathan','LastName' => 'Alessandro','Phone' => '7276674434','Email' => 'nalessan@gmail.com']
+    public function test_create() {
+        $records = array(['FirstName' => 'Nathan','LastName' => 'Alessandro','Phone' => '7276674434','Email' => 'nalessan@gmail.com']
             ,['FirstName' => 'Nathan','LastName' => 'D\'Alessandro','Phone' => '7891234567','Email' => 'nalessan1@gmail.com']
         );
-        $result = json_decode( $this->crud->insert(['object' => 'Contact','records' => $records]) );
+        $result = json_decode( $this->crud->insert(['object' => 'Contact','compositeRequest' => $records]) );
         $this->assertTrue($result->success);
     }
 
@@ -55,7 +54,7 @@ class testBatchRequest extends TestCase
         $this->assertEmpty($jsonResult);
     }
 
-    public function test_delete() {
+    /*public function test_delete() {
         $q = "SELECT Id FROM Contact WHERE Phone = '1234567890' and Email ='nalessan@gmail.com' and isDeleted = false";
         $jsonResult = $this->crud->query($q);
         $response = json_decode($jsonResult);
