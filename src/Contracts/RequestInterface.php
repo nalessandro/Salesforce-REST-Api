@@ -4,12 +4,12 @@ namespace SfRestApi\Contracts;
 
 interface RequestInterface
 {
-    public function query( string $q ): \stdClass;
+    public function query ( string $q );
 
-    public function insert( array $args ): \stdClass;
+    public function insert ( array $args );
 
-    public function update( array $args ): \stdClass;
+    public function update ( array $args );
 
-    public function delete( array $args ): \stdClass;
+    public function delete ( array $args );
 
 }

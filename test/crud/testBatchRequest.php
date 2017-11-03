@@ -38,11 +38,11 @@ class testBatchRequest extends TestCase
         $records = array(['FirstName' => 'Nathan','LastName' => 'Alessandro','Phone' => '7276674434','Email' => 'nalessan@gmail.com']
             ,['FirstName' => 'Nathan','LastName' => 'D\'Alessandro','Phone' => '7891234567','Email' => 'nalessan1@gmail.com']
         );
-        $result = json_decode( $this->crud->insert(['object' => 'Contact','compositeRequest' => $records]) );
+        $result = json_decode( $this->crud->insert(['object' => 'Contact','batchRequests' => $records]) );
         $this->assertTrue($result->success);
     }
 
-    public function test_update() {
+    /*public function test_update() {
         $q = "SELECT Id
               FROM Contact
               WHERE Phone IN ('7276674434','7891234567')

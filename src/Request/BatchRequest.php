@@ -7,8 +7,18 @@ use SfRestApi\Contracts\RequestInterface;
 /**
  * Class BatchRequest
  *
+ * Executes up to 25 subrequests in a single request. The response bodies
+ * and HTTP statuses of the subrequests in the batch are returned in a
+ * single response body. Each subrequest counts against rate limits.
+ * https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_composite_batch.htm
+ *
+ * Salesforce batch requests are only proccessed through input data in the
+ * url query string. Therefore, all 'POST' requests will return errors. Will
+ * only support QUERY, UPDATE, and DELETE.
+ *
  * @todo ADD ERROR HANDLING
- * @todo HANDLE MORE THAN 25 RESULTS
+ * @todo HANDLE MORE THAN 25 RECORDS
+ * @todo THROW ERROR ON INSERT
  *
  * @package SfRestApi\Request
  */
@@ -24,6 +34,13 @@ class BatchRequest extends BaseRequest implements RequestInterface
         return self::$_instance;
     }
 
+    /**
+     * Batch Query
+     *
+     * @param string $q
+     *
+     * @return \stdClass
+     */
     public function query (string $q): \stdClass {
         $results = $this->send('GET'
             ,$this->getConfig()->getBaseUri().'/query?q='.str_replace(' ', '+', $q)
@@ -31,30 +48,36 @@ class BatchRequest extends BaseRequest implements RequestInterface
         return json_decode($results->getBody());
     }
 
-    public function insert (array $args): \stdClass {
-        $reqJson = $this->prepCompositeRequest('POST', $args);
-        $response = $this->send('POST'
-            ,$this->getConfig()->getBaseUri() . '/composite'
-            ,$reqJson
-        );
+    public function insert (array $args) { }
 
-        return json_decode($response->getBody());
-    }
-
+    /**
+     * Batch Update
+     *
+     * @param array $args
+     *
+     * @return \stdClass
+     */
     public function update (array $args): \stdClass {
-        $reqJson = $this->prepCompositeRequest('PATCH', $args);
+        $reqJson = $this->prepBatchRequest('PATCH', $args);
         $response = $this->send('POST'
-            ,$this->getConfig()->getBaseUri() . '/composite'
+            ,$this->getConfig()->getBaseUri() . '/composite/batch'
             ,$reqJson
         );
 
         return json_decode($response->getBody());
     }
 
+    /**
+     * Batch Delete
+     *
+     * @param array $args
+     *
+     * @return \stdClass
+     */
     public function delete (array $args): \stdClass {
-        $reqJson = $this->prepCompositeRequest('DELETE', $args);
+        $reqJson = $this->prepBatchRequest('DELETE', $args);
         $response = $this->send('POST'
-            ,$this->getConfig()->getBaseUri() . '/composite'
+            ,$this->getConfig()->getBaseUri() . '/composite/batch'
             ,$reqJson
         );
 
@@ -62,56 +85,12 @@ class BatchRequest extends BaseRequest implements RequestInterface
     }
 
     /**
-     * Insert Method
-     *
+     * Mixed Requests (a true batch request)
      * @param array $args
-     *
-     * @return string
+     */
+    public function request (array $args) {
 
-    public function insert(array $args): string
-    {
-        $args['records'] = $this->prepBatch('POST', $args['records']);
-        $uri = $this->getConfig()->getBaseUri().'/composite/tree/'.$args['object'];
-        foreach( $args['records'] as $r ) {
-            $result[] = $this->send('POST',$uri,$r);
-        }
-        return json_encode( $result );
-    } */
-
-    /**
-     * Update Method
-     *
-     * @param array $args
-     *
-     * @return string
-
-    public function update(array $args): string
-    {
-        if( count(json_decode($args['records'])) > 1) {
-
-        }
-        $results = $this->request->send('PATCH'
-            ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$args['object'].'/'.$args['id']
-            ,$args['records']);
-
-        return $results;
-    } */
-
-    /**
-     * Delete Method
-     *
-     * @param array $args
-     *
-     * @return string
-
-    public function delete(array $args): string
-    {
-        $results = $this->request->send('DELETE'
-            ,$this->request->getConfig()->getBaseUri().'/sobjects/'.$args['object'].'/'.$args['id']
-            ,'');
-
-        return $results;
-    }*/
+    }
 
     /**
      * @param string $method
@@ -119,17 +98,18 @@ class BatchRequest extends BaseRequest implements RequestInterface
      *
      * @return string
      */
-    protected function prepCompositeRequest (string $method, array $args): string {
+    protected function prepBatchRequest (string $method, array $args): string {
         $ret = array(); $i=0;
-        foreach($args['compositeRequest'] as $record) {
+        foreach($args['batchRequests'] as $record) {
             $r['method'] = $method;
-            $r['url'] = $this->getConfig()->getBaseUri() . '/sobjects/' . $args['object'];
-            $r['referenceId'] = $args['object'].$i;
+            $r['url'] = $this->getConfig()->getBaseUri() . '/sobjects/' . $args['object']
+                    . (array_key_exists('id', $record) ? '/' . $record['id'] : '');
+            //$r['referenceId'] = $args['object'].$i;
             $r['body'] = $record;
             $ret[] = $r;
             $i++;
         }
 
-        return json_encode(['compositeRequest' => $ret]);
+        return json_encode(['batchRequests' => $ret]);
     }
 }
