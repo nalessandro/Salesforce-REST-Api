@@ -51,14 +51,14 @@ class Client
 
     /**
      * Magic Method to handle standard CRUD calls and forward
-     * on to instance specific logic
+     * on to instance specific logic.
      *
      * @param string $method    query|insert|update|delete
      * @param array $params
      *
-     * @return string
+     * @return \stdClass
      */
-    public function __call(string $method, array $params) {
+    public function __call(string $method, array $params): \stdClass {
         return self::$_instance->$method( json_encode( $params[0] ) );
     }
 }

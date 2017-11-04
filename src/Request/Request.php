@@ -45,10 +45,6 @@ class Request extends BaseRequest implements RequestInterface
      * Required Properties:
      *      Query
      *
-     * Example Structure:
-     *      $q->query = 'SELECT Id FROM LEAD'
-     *      $q['query'] = 'SELECT Id FROM LEAD'
-     *
      * @todo: ADD QUERY MORE ABILITY TO RETURN MORE THAN THE MAX 200
      *
      * @param string        $q  JSON encoded object. The query you would like to perform
@@ -78,7 +74,7 @@ class Request extends BaseRequest implements RequestInterface
     public function insert (string $args): \stdClass {
         $args = json_decode( $args );
         $uri = $this->getConfig()->getBaseUri() . $this->requestUri . $args->object;
-        return $this->send('POST',$uri,$args->records);
+        return $this->send('POST',$uri,$args->record);
     }
 
     /**
@@ -97,8 +93,8 @@ class Request extends BaseRequest implements RequestInterface
      */
     public function update (string $args): \stdClass {
         $results = $this->send('PATCH'
-            ,$this->getConfig()->getBaseUri() . $this->requestUri . $args['object'].'/'.$args['id']
-            ,$args['records']);
+            ,$this->getConfig()->getBaseUri() . $this->requestUri . $args->object.'/'.$args->id
+            ,$args->record);
         return $results;
     }
 
@@ -117,7 +113,7 @@ class Request extends BaseRequest implements RequestInterface
      */
     public function delete (string $args): \stdClass {
         $results = $this->send('DELETE'
-            ,$this->getConfig()->getBaseUri() . $this->requestUri . $args['object'].'/'.$args['id']
+            ,$this->getConfig()->getBaseUri() . $this->requestUri . $args->object.'/'.$args->id
             ,'');
         return $results;
     }

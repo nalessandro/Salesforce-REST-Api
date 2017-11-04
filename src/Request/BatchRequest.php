@@ -10,7 +10,7 @@ use SfRestApi\Contracts\RequestInterface;
  * Executes up to 25 subrequests in a single request. The response bodies
  * and HTTP statuses of the subrequests in the batch are returned in a
  * single response body. Each subrequest counts against rate limits.
- * https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_composite_batch.htm
+ * @link https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_composite_batch.htm
  *
  * Salesforce batch requests are only proccessed through input data in the
  * url query string. Therefore, all 'POST' requests will return errors. Will
@@ -36,7 +36,28 @@ class BatchRequest extends BaseRequest implements RequestInterface
     }
 
     /**
+     * Batch Request
+     * ------------------------------------------
+     * Performs a true batch request by allowing varying subrequests to be performed
+     * in one request
+     * @link https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/requests_composite_batch.htm
+     *
+     * Required Properties
+     *
+     * @param string $args
+     * @return \stdClass
+     */
+    public function batch ( string $args ): \stdClass {
+
+    }
+
+    /**
      * Batch Query
+     * ------------------------------------------
+     * Generates a batch request where all subrequests are query calls
+     *
+     * Required Properties:
+     *      query: The query to perform
      *
      * @param string $q
      *
@@ -54,21 +75,30 @@ class BatchRequest extends BaseRequest implements RequestInterface
     }
 
     /**
-     * Insert Method
-     *
+     * Batch Insert Method
+     * ------------------------------------------
      * Batch requests do not accept 'POST' sub-requests. This method
      * always throws an exception
      *
      * @param string $args
      *
+     * @return \stdClass
      * @throws \Exception
      */
-    public function insert (string $args) {
+    public function insert (string $args): \stdClass {
         throw new \Exception( 'Salesforce does not accept batch insert requests', 405 );
     }
 
     /**
-     * Batch Update
+     * Batch Update Method
+     * ------------------------------------------
+     * Generates a single batch request with multiple subrequests from
+     * an array or object. each record must meet all Required Properties.
+     * All subrequests are update calls
+     *
+     * Required Properties:
+     *      object: The object for each of
+     *      records: The records to update
      *
      * @param string $args
      *
@@ -79,7 +109,15 @@ class BatchRequest extends BaseRequest implements RequestInterface
     }
 
     /**
-     * Batch Delete
+     * Batch Update Method
+     * ------------------------------------------
+     * Generates a single batch request with multiple subrequests from
+     * an array or object. each record must meet all Required Properties.
+     * All subrequests are delete calls
+     *
+     * Required Properties:
+     *      object: The object for each of
+     *      id: Id of the record to delete
      *
      * @param string $args
      *
@@ -90,25 +128,20 @@ class BatchRequest extends BaseRequest implements RequestInterface
     }
 
     /**
-     * Mixed Requests (a true batch request)
+     * Prepare Request
+     * ------------------------------------------
+     * Format requests into Salesforce batch request body
      *
-     * @param string $args
-     */
-    public function request (array $args) {
-
-    }
-
-    /**
-     * @param string $method
-     * @param array  $args
+     * @param string    $method
+     * @param \stdClass  $args
      *
      * @return string
      */
-    protected function prepBatchRequest (string $method, \stdClass $args): string {
+    protected function prepRequest (string $method, \stdClass $args): string {
 
-        foreach($args->batchRequests as $record) {
+        foreach($args->records as $record) {
             $r->method = $method;
-            $r->url = $this->getConfig()->getBaseUri() . '/sobjects/' . $args['object']
+            $r->url = $this->getConfig()->getBaseUri() . '/sobjects/' . $args->object
                     . (property_exists($record, 'id') ? '/' . $record->id : '');
             $r->body = $record;
             $ret[] = $r;
@@ -117,6 +150,15 @@ class BatchRequest extends BaseRequest implements RequestInterface
         return json_encode(['batchRequests' => $ret]);
     }
 
+    /**
+     * Make Request
+     * ------------------------------------------
+     * Forwards request on to Salesforce
+     *
+     * @param string $reqJson
+     * 
+     * @return \stdClass
+     */
     protected function makeRequest(string $reqJson): \stdClass {
         $response = $this->send('POST'
             ,$this->getConfig()->getBaseUri().$this->requestUri
