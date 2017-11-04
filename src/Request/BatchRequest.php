@@ -18,13 +18,14 @@ use SfRestApi\Contracts\RequestInterface;
  *
  * @todo ADD ERROR HANDLING
  * @todo HANDLE MORE THAN 25 RECORDS
- * @todo THROW ERROR ON INSERT
  *
  * @package SfRestApi\Request
  */
 class BatchRequest extends BaseRequest implements RequestInterface
 {
     public static $_instance;
+
+    private $requestUri = '/composite/batch';
 
     public static function getInstance() {
         if( !isset( self::$_instance )) {
@@ -41,18 +42,15 @@ class BatchRequest extends BaseRequest implements RequestInterface
      *
      * @return \stdClass
      */
-    public function query (string $q): \stdClass {
-        $requests = json_decode($q, true);
+    public function query ( string $q ): \stdClass {
+        $requests = json_decode($q);
         foreach($requests as $query) {
-            $r['method'] = 'GET';
-            $r['url'] = $this->getConfig()->getBaseUri() . '/query?q=' . str_replace(' ', '+', $query);
+            $r->method = 'GET';
+            $r->url = $this->getConfig()->getBaseUri() . '/query?q=' . str_replace(' ', '+', $query);
             $ret[] = $r;
         }
-        $results = $this->send('POST'
-            ,$this->getConfig()->getBaseUri().'/composite/batch'
-            ,json_encode(['batchRequests' => $ret]));
 
-        return json_decode( $results );
+        return $this->makeRequest( json_encode( ['batchRequests' => $ret ] ) );
     }
 
     /**
@@ -61,51 +59,40 @@ class BatchRequest extends BaseRequest implements RequestInterface
      * Batch requests do not accept 'POST' sub-requests. This method
      * always throws an exception
      *
-     * @param array $args
+     * @param string $args
      *
      * @throws \Exception
      */
-    public function insert (array $args) {
+    public function insert (string $args) {
         throw new \Exception( 'Salesforce does not accept batch insert requests', 405 );
     }
 
     /**
      * Batch Update
      *
-     * @param array $args
+     * @param string $args
      *
      * @return \stdClass
      */
-    public function update (array $args): \stdClass {
-        $reqJson = $this->prepBatchRequest('PATCH', $args);
-        $response = $this->send('POST'
-            ,$this->getConfig()->getBaseUri() . '/composite/batch'
-            ,$reqJson
-        );
-
-        return json_decode($response->getBody());
+    public function update (string $args): \stdClass {
+       return $this->makeRequest( $this->prepBatchRequest('PATCH', json_decode($args)) );
     }
 
     /**
      * Batch Delete
      *
-     * @param array $args
+     * @param string $args
      *
      * @return \stdClass
      */
-    public function delete (array $args): \stdClass {
-        $reqJson = $this->prepBatchRequest('DELETE', $args);
-        $response = $this->send('POST'
-            ,$this->getConfig()->getBaseUri() . '/composite/batch'
-            ,$reqJson
-        );
-
-        return json_decode($response->getBody());
+    public function delete (string $args): \stdClass {
+        return $this->makeRequest( $this->prepBatchRequest('DELETE', json_decode( $args )) );
     }
 
     /**
      * Mixed Requests (a true batch request)
-     * @param array $args
+     *
+     * @param string $args
      */
     public function request (array $args) {
 
@@ -117,16 +104,24 @@ class BatchRequest extends BaseRequest implements RequestInterface
      *
      * @return string
      */
-    protected function prepBatchRequest (string $method, array $args): string {
+    protected function prepBatchRequest (string $method, \stdClass $args): string {
 
-        foreach($args['batchRequests'] as $record) {
-            $r['method'] = $method;
-            $r['url'] = $this->getConfig()->getBaseUri() . '/sobjects/' . $args['object']
-                    . (array_key_exists('id', $record) ? '/' . $record['id'] : '');
-            $r['body'] = $record;
+        foreach($args->batchRequests as $record) {
+            $r->method = $method;
+            $r->url = $this->getConfig()->getBaseUri() . '/sobjects/' . $args['object']
+                    . (property_exists($record, 'id') ? '/' . $record->id : '');
+            $r->body = $record;
             $ret[] = $r;
         }
 
         return json_encode(['batchRequests' => $ret]);
+    }
+
+    protected function makeRequest(string $reqJson): \stdClass {
+        $response = $this->send('POST'
+            ,$this->getConfig()->getBaseUri().$this->requestUri
+            ,$reqJson
+        );
+        return json_decode( $response->getBody() );
     }
 }

@@ -8,6 +8,11 @@ use SfRestApi\Factory\RequestFactory;
 
 /**
  * Class SalesforceClient
+ * Based on the instatiated instance forwards all requests to the
+ * correct classes.
+ *
+ * Converts objects & associative arrays into JSON before processing.
+ *
  * @package SfRestApi
  * @author Nathan Alessandro <nalessan@gmail.com>
  */
@@ -54,6 +59,6 @@ class Client
      * @return string
      */
     public function __call(string $method, array $params) {
-        return self::$_instance->$method( $params[0] );
+        return self::$_instance->$method( json_encode( $params[0] ) );
     }
 }

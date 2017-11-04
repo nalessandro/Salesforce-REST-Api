@@ -22,7 +22,7 @@ class testBatchRequest extends TestCase
         $this->crud = null;
     }
 
-    public function test_base_request_initialized() {
+/*    public function test_base_request_initialized() {
         $this->assertInstanceOf(\SfRestApi\Client::class, $this->crud);
         $this->assertInstanceOf(\SfRestApi\Request\ClientConfig::class, $this->crud->getConfig());
         $this->assertInstanceOf(\SfRestApi\Request\BatchRequest::class, $this->crud->getInstance());
@@ -46,15 +46,14 @@ class testBatchRequest extends TestCase
         catch (\Exception $e){
             $this->assertEquals(405, $e->getCode());
         }
-    }
+    }*/
 
-    /*public function test_update() {
-        $q = "SELECT Id
+    public function test_update() {
+        $q[] = "SELECT Id
               FROM Contact
               WHERE Phone IN ('7276674434','7891234567')
                 and Email IN ('nalessan@gmail.com','nalessan1@gmail.com') and isDeleted = false LIMIT 1";
-        $jsonResult = $this->crud->query($q);
-        $response = json_decode($jsonResult);
+        $result = $this->crud->query(json_encode( $q ));
         $records = json_encode([ 'Phone' => '1234567890']);
         $jsonResult = $this->crud->update(['object' => 'Contact',$response->records[0]->Id,$records] );
         $this->assertEmpty($jsonResult);
