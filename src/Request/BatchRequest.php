@@ -42,13 +42,32 @@ class BatchRequest extends BaseRequest implements RequestInterface
      * @return \stdClass
      */
     public function query (string $q): \stdClass {
-        $results = $this->send('GET'
-            ,$this->getConfig()->getBaseUri().'/query?q='.str_replace(' ', '+', $q)
-            ,'');
-        return json_decode($results->getBody());
+        $requests = json_decode($q, true);
+        foreach($requests as $query) {
+            $r['method'] = 'GET';
+            $r['url'] = $this->getConfig()->getBaseUri() . '/query?q=' . str_replace(' ', '+', $query);
+            $ret[] = $r;
+        }
+        $results = $this->send('POST'
+            ,$this->getConfig()->getBaseUri().'/composite/batch'
+            ,json_encode(['batchRequests' => $ret]));
+
+        return json_decode( $results );
     }
 
-    public function insert (array $args) { }
+    /**
+     * Insert Method
+     *
+     * Batch requests do not accept 'POST' sub-requests. This method
+     * always throws an exception
+     *
+     * @param array $args
+     *
+     * @throws \Exception
+     */
+    public function insert (array $args) {
+        throw new \Exception( 'Salesforce does not accept batch insert requests', 405 );
+    }
 
     /**
      * Batch Update
@@ -99,15 +118,13 @@ class BatchRequest extends BaseRequest implements RequestInterface
      * @return string
      */
     protected function prepBatchRequest (string $method, array $args): string {
-        $ret = array(); $i=0;
+
         foreach($args['batchRequests'] as $record) {
             $r['method'] = $method;
             $r['url'] = $this->getConfig()->getBaseUri() . '/sobjects/' . $args['object']
                     . (array_key_exists('id', $record) ? '/' . $record['id'] : '');
-            //$r['referenceId'] = $args['object'].$i;
             $r['body'] = $record;
             $ret[] = $r;
-            $i++;
         }
 
         return json_encode(['batchRequests' => $ret]);

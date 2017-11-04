@@ -29,17 +29,23 @@ class testBatchRequest extends TestCase
     }
 
     public function test_query() {
-        $q = 'SELECT Id, Name, Phone FROM Lead';
-        $response = $this->crud->query($q);
-        $this->assertGreaterThan(0,$response->totalSize);
+        $q[] = 'SELECT Id, Name, Phone FROM Lead';
+        $q[] = 'SELECT Id, Name, Phone FROM Contact';
+        $response = $this->crud->query( json_encode($q) );
+
+        $this->assertFalse($response->hasErrors);
     }
 
     public function test_create() {
         $records = array(['FirstName' => 'Nathan','LastName' => 'Alessandro','Phone' => '7276674434','Email' => 'nalessan@gmail.com']
             ,['FirstName' => 'Nathan','LastName' => 'D\'Alessandro','Phone' => '7891234567','Email' => 'nalessan1@gmail.com']
         );
-        $result = json_decode( $this->crud->insert(['object' => 'Contact','batchRequests' => $records]) );
-        $this->assertTrue($result->success);
+        try {
+            $result = json_decode( $this->crud->insert(['object' => 'Contact','batchRequests' => $records]) );
+        }
+        catch (\Exception $e){
+            $this->assertEquals(405, $e->getCode());
+        }
     }
 
     /*public function test_update() {
