@@ -65,9 +65,11 @@ class BatchRequest extends BaseRequest implements RequestInterface
      */
     public function query ( string $q ): \stdClass {
         $requests = json_decode($q);
-        foreach($requests as $query) {
+        $r = new \stdClass();
+        for($i=0;$i<count($requests);$i++) {
             $r->method = 'GET';
-            $r->url = $this->getConfig()->getBaseUri() . '/query?q=' . str_replace(' ', '+', $query);
+            $r->url = $this->getConfig()->getBaseUri() . '/query?q=' . str_replace(' ', '+',
+                    urlencode($requests[$i]->query));
             $ret[] = $r;
         }
 
@@ -97,15 +99,18 @@ class BatchRequest extends BaseRequest implements RequestInterface
      * All subrequests are update calls
      *
      * Required Properties:
-     *      object: The object for each of
-     *      records: The records to update
+     *      records:
+     *      object:         The object for each of
+     *      id:             The record to update
+     *      updateFields:   Fields to update
      *
      * @param string $args
      *
      * @return \stdClass
      */
     public function update (string $args): \stdClass {
-       return $this->makeRequest( $this->prepBatchRequest('PATCH', json_decode($args)) );
+        //$args = json_decode($args);
+       return $this->makeRequest( $this->prepRequest('PATCH', json_decode( $args ) ));
     }
 
     /**
@@ -117,14 +122,16 @@ class BatchRequest extends BaseRequest implements RequestInterface
      *
      * Required Properties:
      *      object: The object for each of
-     *      id: Id of the record to delete
+     *      records[]:
+     *          id: Id of the record to update
+     *          updateFields: Fields to update
      *
      * @param string $args
      *
      * @return \stdClass
      */
     public function delete (string $args): \stdClass {
-        return $this->makeRequest( $this->prepBatchRequest('DELETE', json_decode( $args )) );
+        return $this->makeRequest( $this->prepRequest('DELETE', json_decode( $args )) );
     }
 
     /**
@@ -139,14 +146,19 @@ class BatchRequest extends BaseRequest implements RequestInterface
      */
     protected function prepRequest (string $method, \stdClass $args): string {
 
+        $r = new \stdClass();
         foreach($args->records as $record) {
             $r->method = $method;
             $r->url = $this->getConfig()->getBaseUri() . '/sobjects/' . $args->object
-                    . (property_exists($record, 'id') ? '/' . $record->id : '');
-            $r->body = $record;
+                    . (property_exists($record, 'Id') ? '/' . $record->Id : '');
+            //$r->body = $record;
+            if( $method == 'PATCH') {
+                $r->richInput = $record->updateFields;
+            }
             $ret[] = $r;
         }
 
+        //$ret = json_encode(['batchRequests' => $ret]);
         return json_encode(['batchRequests' => $ret]);
     }
 
@@ -156,7 +168,7 @@ class BatchRequest extends BaseRequest implements RequestInterface
      * Forwards request on to Salesforce
      *
      * @param string $reqJson
-     * 
+     *
      * @return \stdClass
      */
     protected function makeRequest(string $reqJson): \stdClass {
@@ -164,6 +176,6 @@ class BatchRequest extends BaseRequest implements RequestInterface
             ,$this->getConfig()->getBaseUri().$this->requestUri
             ,$reqJson
         );
-        return json_decode( $response->getBody() );
+        return json_decode( $response );
     }
 }

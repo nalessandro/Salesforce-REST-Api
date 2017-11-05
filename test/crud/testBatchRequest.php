@@ -22,16 +22,16 @@ class testBatchRequest extends TestCase
         $this->crud = null;
     }
 
-/*    public function test_base_request_initialized() {
+    public function test_base_request_initialized() {
         $this->assertInstanceOf(\SfRestApi\Client::class, $this->crud);
         $this->assertInstanceOf(\SfRestApi\Request\ClientConfig::class, $this->crud->getConfig());
         $this->assertInstanceOf(\SfRestApi\Request\BatchRequest::class, $this->crud->getInstance());
     }
 
     public function test_query() {
-        $q[] = 'SELECT Id, Name, Phone FROM Lead';
-        $q[] = 'SELECT Id, Name, Phone FROM Contact';
-        $response = $this->crud->query( json_encode($q) );
+        $q[] = ['query' => 'SELECT Id, Name, Phone FROM Lead'];
+        $q[] = ['query' => 'SELECT Id, Name, Phone FROM Contact'];
+        $response = $this->crud->query( $q  );
 
         $this->assertFalse($response->hasErrors);
     }
@@ -41,22 +41,25 @@ class testBatchRequest extends TestCase
             ,['FirstName' => 'Nathan','LastName' => 'D\'Alessandro','Phone' => '7891234567','Email' => 'nalessan1@gmail.com']
         );
         try {
-            $result = json_decode( $this->crud->insert(['object' => 'Contact','batchRequests' => $records]) );
+            $result = $this->crud->insert(['object' => 'Contact','batchRequests' => $records] );
         }
         catch (\Exception $e){
             $this->assertEquals(405, $e->getCode());
         }
-    }*/
+    }
 
     public function test_update() {
-        $q[] = "SELECT Id
-              FROM Contact
-              WHERE Phone IN ('7276674434','7891234567')
-                and Email IN ('nalessan@gmail.com','nalessan1@gmail.com') and isDeleted = false LIMIT 1";
-        $result = $this->crud->query(json_encode( $q ));
-        $records = json_encode([ 'Phone' => '1234567890']);
-        $jsonResult = $this->crud->update(['object' => 'Contact',$response->records[0]->Id,$records] );
-        $this->assertEmpty($jsonResult);
+        $q[]['query'] = 'SELECT Id, LastName FROM Contact LIMIT 2';
+        $response = $this->crud->query( $q );
+        $records = $response->results[0]->result->records;
+        foreach($records as $r) {
+            $r->object = $r->attributes->type;
+            $r->updateFields = ['LastName' => $r->LastName];
+            $upd['records'][] = $r;
+        }
+        $upd['object'] = 'Contact';
+        $jsonResult = $this->crud->update( $upd );
+        $this->assertFalse($jsonResult->hasErrors);
     }
 
     /*public function test_delete() {
