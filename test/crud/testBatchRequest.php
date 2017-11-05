@@ -59,14 +59,19 @@ class testBatchRequest extends TestCase
         }
         $upd['object'] = 'Contact';
         $jsonResult = $this->crud->update( $upd );
-        $this->assertFalse($jsonResult->hasErrors);
+        $this->assertFalse( $jsonResult->hasErrors );
     }
 
-    /*public function test_delete() {
-        $q = "SELECT Id FROM Contact WHERE Phone = '1234567890' and Email ='nalessan@gmail.com' and isDeleted = false";
-        $jsonResult = $this->crud->query($q);
-        $response = json_decode($jsonResult);
-        $jsonResult = $this->crud->delete('Contact', $response->records[0]->Id);
-        $this->assertEmpty($jsonResult);
-    }*/
+    public function test_delete() {
+        $q[]['query'] = 'SELECT Id FROM Contact WHERE Phone = \'1234567890\'';
+        $response = $this->crud->query( $q );
+        $records = $response->results[0]->result->records;
+        foreach($records as $r) {
+            $r->object = $r->attributes->type;
+            $del['records'][] = $r;
+        }
+        $del['object'] = 'Contact';
+        $jsonResult = $this->crud->delete( $del );
+        $this->assertFalse( $jsonResult->hasErrors );
+    }
 }
