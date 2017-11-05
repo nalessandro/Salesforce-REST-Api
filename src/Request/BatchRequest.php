@@ -43,12 +43,14 @@ class BatchRequest extends BaseRequest implements RequestInterface
      * @link https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/requests_composite_batch.htm
      *
      * Required Properties
+     *      requests: any mixture of query, update, delete formatted requests
      *
      * @param string $args
      * @return \stdClass
      */
     public function batch ( string $args ): \stdClass {
-
+        $req = json_decode( $args );
+        return $this->makeRequest(json_encode( ['batchRequests' => $req] ));
     }
 
     /**
@@ -70,10 +72,10 @@ class BatchRequest extends BaseRequest implements RequestInterface
             $r->method = 'GET';
             $r->url = $this->getConfig()->getBaseUri() . '/query?q=' . str_replace(' ', '+',
                     urlencode($requests[$i]->query));
-            $ret[] = $r;
+            $req[] = $r;
         }
 
-        return $this->makeRequest( json_encode( ['batchRequests' => $ret ] ) );
+        return $this->makeRequest( json_encode( ['batchRequests' => $req ] ) );
     }
 
     /**
@@ -155,11 +157,10 @@ class BatchRequest extends BaseRequest implements RequestInterface
             if( $method == 'PATCH') {
                 $r->richInput = $record->updateFields;
             }
-            $ret[] = $r;
+            $req[] = $r;
         }
 
-        //$ret = json_encode(['batchRequests' => $ret]);
-        return json_encode(['batchRequests' => $ret]);
+        return json_encode(['batchRequests' => $req]);
     }
 
     /**
