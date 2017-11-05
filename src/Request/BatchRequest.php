@@ -6,7 +6,7 @@ use SfRestApi\Contracts\RequestInterface;
 
 /**
  * Class BatchRequest
- *
+ * ------------------------------------------
  * Executes up to 25 subrequests in a single request. The response bodies
  * and HTTP statuses of the subrequests in the batch are returned in a
  * single response body. Each subrequest counts against rate limits.

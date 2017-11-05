@@ -2,9 +2,7 @@
 
 namespace Test\crud;
 
-use PHPUnit\Framework\TestCase;
-
-class testBatchRequest extends TestCase
+class testBatchRequest extends \PHPUnit\Framework\TestCase
 {
     protected $crud;
 
@@ -22,13 +20,13 @@ class testBatchRequest extends TestCase
         $this->crud = null;
     }
 
-    public function test_base_request_initialized() {
+    public function test_batch_request_initialized() {
         $this->assertInstanceOf(\SfRestApi\Client::class, $this->crud);
         $this->assertInstanceOf(\SfRestApi\Request\ClientConfig::class, $this->crud->getConfig());
         $this->assertInstanceOf(\SfRestApi\Request\BatchRequest::class, $this->crud->getInstance());
     }
 
-    public function test_query() {
+    public function test_batch_query_request() {
         $q[] = ['query' => 'SELECT Id, Name, Phone FROM Lead'];
         $q[] = ['query' => 'SELECT Id, Name, Phone FROM Contact'];
         $response = $this->crud->query( $q  );
@@ -36,7 +34,7 @@ class testBatchRequest extends TestCase
         $this->assertFalse($response->hasErrors);
     }
 
-    public function test_create() {
+    public function test_batch_create_request() {
         $records = array(['FirstName' => 'Nathan','LastName' => 'Alessandro','Phone' => '7276674434','Email' => 'nalessan@gmail.com']
             ,['FirstName' => 'Nathan','LastName' => 'D\'Alessandro','Phone' => '7891234567','Email' => 'nalessan1@gmail.com']
         );
@@ -48,7 +46,7 @@ class testBatchRequest extends TestCase
         }
     }
 
-    public function test_update() {
+    public function test_batch_update_request() {
         $q[]['query'] = 'SELECT Id, LastName FROM Contact LIMIT 2';
         $response = $this->crud->query( $q );
         $records = $response->results[0]->result->records;
@@ -62,7 +60,7 @@ class testBatchRequest extends TestCase
         $this->assertFalse( $jsonResult->hasErrors );
     }
 
-    public function test_delete() {
+    public function test_batch_delete_request() {
         $q[]['query'] = 'SELECT Id FROM Contact WHERE Phone = \'1234567890\'';
         $response = $this->crud->query( $q );
         $records = $response->results[0]->result->records;
@@ -74,4 +72,7 @@ class testBatchRequest extends TestCase
         $jsonResult = $this->crud->delete( $del );
         $this->assertFalse( $jsonResult->hasErrors );
     }
+
+    public function test_batch_requet() {}
+
 }
