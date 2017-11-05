@@ -38,16 +38,15 @@ class CompositeRequest extends BaseRequest implements RequestInterface
 
     public function query( string $q ): \stdClass {}
 
-    public function insert ( string $args ): \stdClass
-    {
+    public function insert ( string $args ): \stdClass {
         // TODO: Implement insert() method.
     }
-    public function update ( string $args ): \stdClass
-    {
+
+    public function update ( string $args ): \stdClass {
         // TODO: Implement update() method.
     }
-    public function delete ( string $args ): \stdClass
-    {
+
+    public function delete ( string $args ): \stdClass {
         // TODO: Implement delete() method.
     }
 

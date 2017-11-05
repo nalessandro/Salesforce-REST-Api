@@ -21,25 +21,23 @@ class TreeRequest extends BaseRequest implements RequestInterface
         return self::$_instance;
     }
 
-    public function getConfig()
-    {
-        return parent::getConfig();
-    }
-
-    public function query (string $q) {
+    public function tree ( string $args ): \stdClass {
 
     }
 
-    public function insert ()
-    {
+    public function query (string $q): \stdClass {
+
+    }
+
+    public function insert (string $args): \stdClass {
         // TODO: Implement insert() method.
     }
-    public function update ()
-    {
+
+    public function update (string $args): \stdClass {
         // TODO: Implement update() method.
     }
-    public function delete ()
-    {
+
+    public function delete (string $args): \stdClass {
         // TODO: Implement delete() method.
     }
 }

@@ -1,0 +1,32 @@
+<?php
+
+namespace Test;
+
+class Config {
+    const USERNAME = '';
+    const PASSWORD = '';
+    const CLIENT_ID = '';
+    const CLIENT_SECRET = '';
+    const SECURITY_TOKEN = '';
+
+    public static function getUsername() {
+        return self::USERNAME;
+    }
+
+    public static function getPass() {
+        return self::PASSWORD;
+    }
+
+    public static function getClientId() {
+        return self::CLIENT_ID;
+    }
+
+    public static function getClientSecret() {
+        return self::CLIENT_SECRET;
+    }
+
+    public static function getSecurityToken() {
+        return self::SECURITY_TOKEN;
+    }
+
+}
