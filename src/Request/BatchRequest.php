@@ -21,7 +21,7 @@ use SfRestApi\Contracts\RequestInterface;
  *
  * @package SfRestApi\Request
  */
-class BatchRequest extends BaseRequest implements RequestInterface
+class BatchRequest extends BaseRequest implements CompositeInterface
 {
     public static $_instance;
 
@@ -48,92 +48,9 @@ class BatchRequest extends BaseRequest implements RequestInterface
      * @param string $args
      * @return \stdClass
      */
-    public function batch ( string $args ): \stdClass {
+    public function request ( string $args ): \stdClass {
         $req = json_decode( $args );
         return $this->makeRequest(json_encode( ['batchRequests' => $req] ));
-    }
-
-    /**
-     * Batch Query
-     * ------------------------------------------
-     * Generates a batch request where all subrequests are query calls
-     *
-     * Required Properties:
-     *      query: The query to perform
-     *
-     * @param string $q
-     *
-     * @return \stdClass
-     */
-    public function query ( string $q ): \stdClass {
-        $requests = json_decode($q);
-        $r = new \stdClass();
-        for($i=0;$i<count($requests);$i++) {
-            $r->method = 'GET';
-            $r->url = $this->getConfig()->getBaseUri() . '/query?q=' . str_replace(' ', '+',
-                    urlencode($requests[$i]->query));
-            $req[] = $r;
-        }
-
-        return $this->makeRequest( json_encode( ['batchRequests' => $req ] ) );
-    }
-
-    /**
-     * Batch Insert Method
-     * ------------------------------------------
-     * Batch requests do not accept 'POST' sub-requests. This method
-     * always throws an exception
-     *
-     * @param string $args
-     *
-     * @return \stdClass
-     * @throws \Exception
-     */
-    public function insert (string $args): \stdClass {
-        throw new \Exception( 'Salesforce does not accept batch insert requests', 405 );
-    }
-
-    /**
-     * Batch Update Method
-     * ------------------------------------------
-     * Generates a single batch request with multiple subrequests from
-     * an array or object. each record must meet all Required Properties.
-     * All subrequests are update calls
-     *
-     * Required Properties:
-     *      records:
-     *      object:         The object for each of
-     *      id:             The record to update
-     *      updateFields:   Fields to update
-     *
-     * @param string $args
-     *
-     * @return \stdClass
-     */
-    public function update (string $args): \stdClass {
-        //$args = json_decode($args);
-       return $this->makeRequest( $this->prepRequest('PATCH', json_decode( $args ) ));
-    }
-
-    /**
-     * Batch Update Method
-     * ------------------------------------------
-     * Generates a single batch request with multiple subrequests from
-     * an array or object. each record must meet all Required Properties.
-     * All subrequests are delete calls
-     *
-     * Required Properties:
-     *      object: The object for each of
-     *      records[]:
-     *          id: Id of the record to update
-     *          updateFields: Fields to update
-     *
-     * @param string $args
-     *
-     * @return \stdClass
-     */
-    public function delete (string $args): \stdClass {
-        return $this->makeRequest( $this->prepRequest('DELETE', json_decode( $args )) );
     }
 
     /**

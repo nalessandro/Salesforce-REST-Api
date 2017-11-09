@@ -2,7 +2,7 @@
 
 namespace SfRestApi\Request;
 
-use SfRestApi\Contracts\RequestInterface;
+use SfRestApi\Contracts\CompositeInterface;
 
 /**
  * Class CompositeRequest
@@ -18,7 +18,7 @@ use SfRestApi\Contracts\RequestInterface;
  *
  * @package SfRestApi\Request
  */
-class CompositeRequest extends BaseRequest implements RequestInterface
+class CompositeRequest extends BaseRequest implements CompositeInterface
 {
     public static $_instance;
 
@@ -32,53 +32,32 @@ class CompositeRequest extends BaseRequest implements RequestInterface
         return self::$_instance;
     }
 
-    public function composite( string $args ): \stdClass {
-        return $this->makeRequest( json_decode( $args ));
-    }
-
-    public function query( string $q ): \stdClass {}
-
-    public function insert ( string $args ): \stdClass {
-        // TODO: Implement insert() method.
-    }
-
-    public function update ( string $args ): \stdClass {
-        // TODO: Implement update() method.
-    }
-
-    public function delete ( string $args ): \stdClass {
-        // TODO: Implement delete() method.
-    }
-
     /**
-     * Preps multiple records to be sent in a Batch
-     *
-     * @todo Refactor for composite requests
-     *
-     * @param String $method
-     * @param array  $args
-     *
-     * @return array
+     * Composite Request
+     * ------------------------------------------
+     * Executes a series of REST API requests in a single call. You can use the output of one request as the input to a 
+     * subsequent request. The response bodies and HTTP statuses of the requests are returned in a single response body. The 
+     * entire request counts as a single call toward your API limits.
+     * @link https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/requests_composite.htm
+     * 
+     * Sample JSON:
+     * {
+     *     "method" : "GET",
+     *     "url" : "/services/data/v38.0/sobjects/Account/describe",
+     *     "httpHeaders" : { "If-Modified-Since" : "Tue, 31 May 2016 18:00:00 GMT" },   
+     *     "referenceId" : "AccountInfo"
+     * },{
+     *     "method" : "POST",
+     *     "url" : "/services/data/v38.0/sobjects/Account",
+     *     "referenceId" : "refAccount",
+     *     "body" : { "Name" : "Sample Account" }
+     * }
+     * 
+     * @param  string $args [description]
+     * @return [type]       [description]
      */
-    public function prepRequest( String $method, array $args ) {
-
-        $i=0;
-        $batched = array();
-        $r1 = array();
-        foreach($args as $r) {
-            $r['method'] = $method;
-            $r['url'] = $this->getConfig()->getApiVersion() . $this->requestUri . $args['object'] . '/' . $r['id'];
-            $r['richInput'] = $r;
-            $r1[] = $r;
-            $i++;
-
-            if($i%200 == 0) {
-                $batched[] = $r1;
-                $r1 = array();
-            }
-        }
-
-        return $batched;
+    public function request( string $args ): \stdClass {
+        return $this->makeRequest( json_decode( $args ));
     }
 
     /**
@@ -90,7 +69,7 @@ class CompositeRequest extends BaseRequest implements RequestInterface
      *
      * @return \stdClass
      */
-    protected function makeRequest(string $reqJson): \stdClass {
+    protected function makeRequest( array $args ): \stdClass {
         $response = $this->send('POST'
             ,$this->getConfig()->getBaseUri().$this->requestUri
             ,$reqJson
