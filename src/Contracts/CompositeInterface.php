@@ -2,7 +2,9 @@
 
 namespace SfRestApi\Contracts;
 
-interface RequestInterface
+interface CompositeInterface
 {
+    public static function getInstance();
+
 	public function request ( string $args ) : \stdClass;
 }

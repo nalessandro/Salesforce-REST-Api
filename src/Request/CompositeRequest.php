@@ -35,16 +35,17 @@ class CompositeRequest extends BaseRequest implements CompositeInterface
     /**
      * Composite Request
      * ------------------------------------------
-     * Executes a series of REST API requests in a single call. You can use the output of one request as the input to a 
-     * subsequent request. The response bodies and HTTP statuses of the requests are returned in a single response body. The 
-     * entire request counts as a single call toward your API limits.
+     * Executes a series of REST API requests in a single call. You can use the output of one request
+     * as the input to a subsequent request. The response bodies and HTTP statuses of the requests are
+     * returned in a single response body. The entire request counts as a single call toward your API
+     * limits.
      * @link https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/requests_composite.htm
-     * 
+     *
      * Sample JSON:
      * {
      *     "method" : "GET",
      *     "url" : "/services/data/v38.0/sobjects/Account/describe",
-     *     "httpHeaders" : { "If-Modified-Since" : "Tue, 31 May 2016 18:00:00 GMT" },   
+     *     "httpHeaders" : { "If-Modified-Since" : "Tue, 31 May 2016 18:00:00 GMT" },
      *     "referenceId" : "AccountInfo"
      * },{
      *     "method" : "POST",
@@ -52,8 +53,9 @@ class CompositeRequest extends BaseRequest implements CompositeInterface
      *     "referenceId" : "refAccount",
      *     "body" : { "Name" : "Sample Account" }
      * }
-     * 
+     *
      * @param  string $args [description]
+     *
      * @return [type]       [description]
      */
     public function request( string $args ): \stdClass {
@@ -72,7 +74,7 @@ class CompositeRequest extends BaseRequest implements CompositeInterface
     protected function makeRequest( array $args ): \stdClass {
         $response = $this->send('POST'
             ,$this->getConfig()->getBaseUri().$this->requestUri
-            ,$reqJson
+            ,json_encode( $args )
         );
         return json_decode( $response );
     }
