@@ -116,7 +116,7 @@ class TreeRequest extends BaseRequest implements CompositeInterface
 
         $response = $this->send('POST'
             ,$this->getConfig()->getBaseUri().$this->requestUri.$object
-            ,json_encode( $args );
+            ,json_encode( $args )
         );
         return json_decode( $response );
     }
