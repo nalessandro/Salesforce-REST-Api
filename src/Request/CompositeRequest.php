@@ -11,10 +11,12 @@ use SfRestApi\Contracts\CompositeInterface;
  * the output of one request as the input to a subsequent request. The
  * response bodies and HTTP statuses of the requests are returned in a single
  * response body. The entire request counts as a single call toward your API limits.
+ *
+ * You can have up to 25 subrequests in a single call. Up to 5 of these subrequests can be query operations,
+ * including Query, QueryAll, and “Query More” requests to obtain the next batch of query results.
  * @link https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_composite_composite.htm
  *
  * @todo ADD ERROR HANDLING
- * @todo HANDLE MORE THAN 200 RECORDS
  *
  * @package SfRestApi\Request
  */
@@ -59,7 +61,7 @@ class CompositeRequest extends BaseRequest implements CompositeInterface
      * @return [type]       [description]
      */
     public function request( string $args ): \stdClass {
-        return $this->makeRequest( json_decode( $args ));
+        return $this->makeRequest(  $args );
     }
 
     /**
@@ -71,10 +73,10 @@ class CompositeRequest extends BaseRequest implements CompositeInterface
      *
      * @return \stdClass
      */
-    protected function makeRequest( array $args ): \stdClass {
+    protected function makeRequest( string $reqJson ): \stdClass {
         $response = $this->send('POST'
             ,$this->getConfig()->getBaseUri().$this->requestUri
-            ,json_encode( $args )
+            ,$reqJson
         );
         return json_decode( $response );
     }
